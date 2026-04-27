@@ -9,6 +9,9 @@ from app.models.schemas import (
     EvidenceCard,
     EvidencePage,
     IngestionResultSchema,
+    KnowledgeIngestRequest,
+    KnowledgeIngestResponse,
+    KnowledgeSearchResult,
     LogPage,
     MetricsResponse,
     ResumeRequest,
@@ -230,7 +233,49 @@ async def rag_stats(request: Request) -> dict[str, object]:
         return {"enabled": False, "message": "RAG 未启用（rag_enabled=false 或初始化失败）"}
     stats = await orchestrator.ingester.vector_store.stats()
     history = orchestrator.ingester.ingestion_history()
-    return {"enabled": True, **stats, "ingestion_history": history[-10:]}
+    knowledge_history = orchestrator.ingester.knowledge_ingestion_history()
+    return {"enabled": True, **stats, "ingestion_history": history[-10:], "knowledge_ingestion_history": knowledge_history[-10:]}
+
+
+@router.post("/rag/knowledge", response_model=KnowledgeIngestResponse)
+async def ingest_knowledge(payload: KnowledgeIngestRequest, request: Request) -> KnowledgeIngestResponse:
+    """将外部知识资料写入 RAG 知识库。"""
+    orchestrator = request.app.state.orchestrator
+    if not orchestrator.ingester:
+        raise HTTPException(status_code=503, detail="RAG 未启用")
+    result = await orchestrator.ingester.ingest_knowledge(
+        source_id=payload.source_id,
+        title=payload.title,
+        text=payload.text,
+        source_url=payload.source_url,
+        source_type=payload.source_type,
+        metadata=payload.metadata,
+    )
+    return KnowledgeIngestResponse(
+        source_id=result.source_id,
+        title=result.title,
+        chunks_written=result.chunks_written,
+        chunks_skipped=result.chunks_skipped,
+        duration_ms=result.duration_ms,
+        error=result.error,
+    )
+
+
+@router.get("/rag/knowledge/search", response_model=list[KnowledgeSearchResult])
+async def search_knowledge(
+    request: Request,
+    q: str = Query(..., min_length=1, description="查询文本"),
+    top_k: int = Query(default=5, ge=1, le=20),
+) -> list[KnowledgeSearchResult]:
+    """只检索主动写入的知识库资料。"""
+    orchestrator = request.app.state.orchestrator
+    if not orchestrator.ingester:
+        raise HTTPException(status_code=503, detail="RAG 未启用")
+    results = await orchestrator.ingester.search_knowledge(q, top_k=top_k)
+    return [
+        KnowledgeSearchResult(doc_id=r.doc_id, text=r.text, score=r.score, metadata=r.metadata)
+        for r in results
+    ]
 
 
 @router.get("/rag/search")
@@ -258,3 +303,13 @@ async def delete_rag_task(task_id: str, request: Request) -> dict[str, object]:
         raise HTTPException(status_code=503, detail="RAG 未启用")
     deleted = await orchestrator.ingester.vector_store.delete_by_task(task_id)
     return {"task_id": task_id, "deleted_chunks": deleted}
+
+
+@router.delete("/rag/knowledge/{source_id}")
+async def delete_knowledge_source(source_id: str, request: Request) -> dict[str, object]:
+    """删除某个外部知识源在向量库中的所有 chunk。"""
+    orchestrator = request.app.state.orchestrator
+    if not orchestrator.ingester:
+        raise HTTPException(status_code=503, detail="RAG 未启用")
+    deleted = await orchestrator.ingester.delete_knowledge_source(source_id)
+    return {"source_id": source_id, "deleted_chunks": deleted}

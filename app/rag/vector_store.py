@@ -127,11 +127,17 @@ class VectorStore:
         return sorted(results, key=lambda r: r.score, reverse=True)
 
     async def delete_by_task(self, task_id: str) -> int:
+        return await self.delete_where({"task_id": task_id})
+
+    async def delete_by_source(self, source_id: str) -> int:
+        return await self.delete_where({"source_id": source_id})
+
+    async def delete_where(self, where: dict[str, Any]) -> int:
         collection = await self._ensure_collection()
         loop = asyncio.get_event_loop()
 
         def _delete() -> int:
-            existing = collection.get(where={"task_id": task_id})
+            existing = collection.get(where=where)
             ids = existing.get("ids", [])
             if ids:
                 collection.delete(ids=ids)
@@ -139,15 +145,26 @@ class VectorStore:
 
         return await loop.run_in_executor(None, _delete)
 
-    async def count(self) -> int:
+    async def count(self, where: dict[str, Any] | None = None) -> int:
         collection = await self._ensure_collection()
         loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(None, collection.count)
+        if not where:
+            return await loop.run_in_executor(None, collection.count)
+
+        def _count_where() -> int:
+            existing = collection.get(where=where)
+            return len(existing.get("ids", []))
+
+        return await loop.run_in_executor(None, _count_where)
 
     async def stats(self) -> dict[str, Any]:
         total = await self.count()
+        knowledge_total = await self.count({"record_type": "knowledge"})
+        evidence_total = await self.count({"record_type": "research_evidence"})
         return {
             "collection": _COLLECTION_NAME,
             "total_documents": total,
+            "knowledge_documents": knowledge_total,
+            "research_evidence_documents": evidence_total,
             "persist_dir": self._settings.rag_chroma_persist_dir,
         }

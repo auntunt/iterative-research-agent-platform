@@ -27,6 +27,16 @@ class IngestionResult:
     error: str | None = None
 
 
+@dataclass
+class KnowledgeIngestionResult:
+    source_id: str
+    title: str
+    chunks_written: int
+    chunks_skipped: int
+    duration_ms: float
+    error: str | None = None
+
+
 class AutoIngester:
     """
     任务完成后将证据卡片自动向量化入库，并提供知识库预查询接口。
@@ -47,6 +57,7 @@ class AutoIngester:
         self.chunker = chunker
         self.settings = settings
         self._ingestion_log: list[IngestionResult] = []
+        self._knowledge_ingestion_log: list[KnowledgeIngestionResult] = []
 
     async def ingest_task(
         self,
@@ -88,6 +99,7 @@ class AutoIngester:
                         text=chunk.text,
                         metadata={
                             "task_id": task_id,
+                            "record_type": "research_evidence",
                             "card_id": card.card_id,
                             "topic_id": card.topic_id,
                             "source_url": card.citation.url,
@@ -135,6 +147,104 @@ class AutoIngester:
         )
         return result
 
+    async def ingest_knowledge(
+        self,
+        source_id: str,
+        title: str,
+        text: str,
+        source_url: str = "",
+        source_type: str = "manual",
+        metadata: dict[str, Any] | None = None,
+    ) -> KnowledgeIngestionResult:
+        """
+        将外部知识资料写入向量库。
+
+        这条链路面向业务资料、研究材料、用户上传内容等真实知识源，
+        与任务完成后自动沉淀的 EvidenceCard 区分存储。
+        """
+        started = time.perf_counter()
+        metadata = metadata or {}
+        docs: list[VectorDocument] = []
+        skipped = 0
+
+        try:
+            chunks = await self.chunker.chunk(text)
+        except Exception as exc:
+            result = KnowledgeIngestionResult(
+                source_id=source_id,
+                title=title,
+                chunks_written=0,
+                chunks_skipped=1,
+                duration_ms=round((time.perf_counter() - started) * 1000, 2),
+                error=str(exc),
+            )
+            self._knowledge_ingestion_log.append(result)
+            logger.warning("knowledge_chunker_failed", extra={"source_id": source_id, "error": str(exc)})
+            return result
+
+        try:
+            embeddings = await self.embedder.embed_batch([chunk.text for chunk in chunks])
+        except Exception as exc:
+            result = KnowledgeIngestionResult(
+                source_id=source_id,
+                title=title,
+                chunks_written=0,
+                chunks_skipped=len(chunks),
+                duration_ms=round((time.perf_counter() - started) * 1000, 2),
+                error=str(exc),
+            )
+            self._knowledge_ingestion_log.append(result)
+            logger.warning("knowledge_embed_failed", extra={"source_id": source_id, "error": str(exc)})
+            return result
+
+        safe_extra = self._safe_metadata(metadata)
+        for chunk, embedding in zip(chunks, embeddings):
+            docs.append(
+                VectorDocument(
+                    id=f"knowledge:{source_id}:{chunk.idx}",
+                    embedding=embedding,
+                    text=chunk.text,
+                    metadata={
+                        **safe_extra,
+                        "record_type": "knowledge",
+                        "source_id": source_id,
+                        "title": title,
+                        "source_url": source_url,
+                        "source_type": source_type,
+                        "chunk_idx": chunk.idx,
+                        "token_count": chunk.token_count,
+                    },
+                )
+            )
+
+        if docs:
+            try:
+                await self.vector_store.upsert_batch(docs)
+            except Exception as exc:
+                skipped = len(docs)
+                docs = []
+                logger.error("knowledge_ingest_failed", extra={"source_id": source_id, "error": str(exc)})
+                error = str(exc)
+            else:
+                error = None
+        else:
+            error = None
+
+        result = KnowledgeIngestionResult(
+            source_id=source_id,
+            title=title,
+            chunks_written=len(docs),
+            chunks_skipped=skipped,
+            duration_ms=round((time.perf_counter() - started) * 1000, 2),
+            error=error,
+        )
+        self._knowledge_ingestion_log.append(result)
+        logger.info(
+            "knowledge_ingest_completed",
+            extra={"source_id": source_id, "chunks_written": result.chunks_written, "duration_ms": result.duration_ms},
+        )
+        return result
+
     async def check_cache(
         self,
         query: str,
@@ -164,6 +274,23 @@ class AutoIngester:
             logger.warning("rag_search_failed", extra={"error": str(exc)})
             return []
 
+    async def search_knowledge(self, query: str, top_k: int = 5) -> list[SearchResult]:
+        """只检索主动写入的知识库资料，不混入任务自动沉淀的证据卡片。"""
+        try:
+            embedding = await self.embedder.embed(query)
+            return await self.vector_store.search(
+                embedding,
+                top_k=top_k,
+                min_score=0.0,
+                where={"record_type": "knowledge"},
+            )
+        except Exception as exc:
+            logger.warning("knowledge_search_failed", extra=log_context(query=query[:100], error=str(exc)))
+            return []
+
+    async def delete_knowledge_source(self, source_id: str) -> int:
+        return await self.vector_store.delete_by_source(source_id)
+
     def ingestion_history(self) -> list[dict[str, Any]]:
         return [
             {
@@ -176,3 +303,26 @@ class AutoIngester:
             }
             for r in self._ingestion_log
         ]
+
+    def knowledge_ingestion_history(self) -> list[dict[str, Any]]:
+        return [
+            {
+                "source_id": r.source_id,
+                "title": r.title,
+                "chunks_written": r.chunks_written,
+                "chunks_skipped": r.chunks_skipped,
+                "duration_ms": r.duration_ms,
+                "error": r.error,
+            }
+            for r in self._knowledge_ingestion_log
+        ]
+
+    @staticmethod
+    def _safe_metadata(metadata: dict[str, Any]) -> dict[str, str | int | float | bool]:
+        safe: dict[str, str | int | float | bool] = {}
+        for key, value in metadata.items():
+            if isinstance(value, (str, int, float, bool)):
+                safe[str(key)] = value
+            elif value is not None:
+                safe[str(key)] = str(value)
+        return safe

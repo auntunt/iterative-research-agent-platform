@@ -45,6 +45,7 @@ flowchart LR
 - MCP 风格工具 Schema：Web Search、Web Fetch、Python 沙盒、文档读取、Markdown 渲染
 - 每张证据卡包含 URL、标题、段落 ID、snippet、置信度和来源类型
 - 滑动证据窗口和长期任务记忆
+- RAG 知识系统：支持外部知识资料入库、语义检索、知识源删除，并与 Research 流程衔接
 - 证据接口：`GET /task/{task_id}/evidence`
 - 产物导出接口：`POST /task/{task_id}/artifacts`，生成 `report.md`、`evidence_cards.json`、`citations.json`、`trace.json`、`metrics.json`、`run_manifest.json`
 - 搜索健康检查接口：`GET /search/providers`
@@ -132,6 +133,22 @@ curl -X POST http://127.0.0.1:8000/task/<task_id>/artifacts
 curl http://127.0.0.1:8000/search/providers
 curl http://127.0.0.1:8000/metrics
 curl "http://127.0.0.1:8000/logs?task_id=<task_id>&limit=50"
+```
+
+写入和查询 RAG 知识库：
+
+```bash
+curl -X POST http://127.0.0.1:8000/rag/knowledge \
+  -H "Content-Type: application/json" \
+  -d '{
+    "source_id": "agent-notes-001",
+    "title": "Agent 设计资料",
+    "text": "这里放入外部业务资料、研究材料、用户上传文本或内部知识内容。",
+    "source_type": "internal_doc"
+  }'
+
+curl "http://127.0.0.1:8000/rag/knowledge/search?q=Agent%20设计&top_k=5"
+curl -X DELETE http://127.0.0.1:8000/rag/knowledge/agent-notes-001
 ```
 
 ## 配置

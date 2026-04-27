@@ -245,6 +245,31 @@ class IngestionResultSchema(BaseModel):
     error: str | None = None
 
 
+class KnowledgeIngestRequest(BaseModel):
+    source_id: str = Field(default_factory=lambda: str(uuid4()))
+    title: str = Field(..., min_length=1)
+    text: str = Field(..., min_length=1)
+    source_url: str = ""
+    source_type: str = "manual"
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class KnowledgeIngestResponse(BaseModel):
+    source_id: str
+    title: str
+    chunks_written: int
+    chunks_skipped: int
+    duration_ms: float
+    error: str | None = None
+
+
+class KnowledgeSearchResult(BaseModel):
+    doc_id: str
+    text: str
+    score: float
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
 class ResumeRequest(BaseModel):
     approved_cards: list[str] = Field(default_factory=list)
     action: str = "approve"      # approve | reject_all

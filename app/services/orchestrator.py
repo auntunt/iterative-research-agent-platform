@@ -87,7 +87,11 @@ class Orchestrator:
 
             embedder = Embedder(settings)
             vector_store = VectorStore(settings)
-            chunker = SemanticChunker(embedder, threshold=settings.rag_chunk_threshold)
+            chunker = SemanticChunker(
+                embedder,
+                threshold=settings.rag_chunk_threshold,
+                max_chunk_tokens=settings.rag_chunk_max_tokens,
+            )
             self.ingester = AutoIngester(vector_store, embedder, chunker, settings)
             logger.info("rag_initialized", extra=log_context(persist_dir=settings.rag_chroma_persist_dir))
         except Exception as exc:
@@ -697,7 +701,8 @@ class Orchestrator:
         cards: list[EvidenceCard] = []
         for r in results:
             url = r.metadata.get("source_url", "")
-            card_id = f"card-{hashlib.sha1(f'rag:{topic.topic_id}:{url}'.encode()).hexdigest()[:12]}"
+            title = r.metadata.get("title") or r.metadata.get("source_url") or "知识库缓存"
+            card_id = f"card-{hashlib.sha1(f'rag:{topic.topic_id}:{r.doc_id}'.encode()).hexdigest()[:12]}"
             cards.append(EvidenceCard(
                 card_id=card_id,
                 topic_id=topic.topic_id,
@@ -705,7 +710,7 @@ class Orchestrator:
                 summary=r.text,
                 citation=Citation(
                     url=url,
-                    title=r.metadata.get("source_url", "知识库缓存"),
+                    title=title,
                     paragraph_id=r.doc_id,
                     snippet=r.text[:240],
                 ),

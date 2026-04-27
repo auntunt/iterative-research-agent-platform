@@ -20,6 +20,9 @@
 | `GET /task/{task_id}/context_stats` | 查询上下文统计 |
 | `POST /task/{task_id}/resume` | Human-in-the-loop 恢复 |
 | `GET /rag/stats` | 查询 RAG 知识库统计 |
+| `POST /rag/knowledge` | 写入外部知识资料 |
+| `GET /rag/knowledge/search` | 只检索主动写入的知识库资料 |
+| `DELETE /rag/knowledge/{source_id}` | 删除某个知识源 |
 | `GET /rag/search` | 手动查询 RAG |
 
 ## 前端工作台
