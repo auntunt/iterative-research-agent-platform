@@ -1,0 +1,36 @@
+[
+  {
+    "key": "simple",
+    "name": "RAG 覆盖盲点概览",
+    "task": "研究为什么单轮 RAG 在开放式技术问题中容易遗漏重要证据。",
+    "metadata": {
+      "tenant": "demo-lab",
+      "priority": "标准",
+      "source": "demo",
+      "expected_demo_shape": "planner、并行 researcher、critic、writer"
+    }
+  },
+  {
+    "key": "medium",
+    "name": "模型路由成本研究",
+    "task": "比较 GPT-5-nano、GPT-5-mini、GPT-5 和 Qwen 混合路由策略在多智能体研究任务中的成本控制效果。",
+    "metadata": {
+      "tenant": "demo-lab",
+      "priority": "高",
+      "source": "demo",
+      "expected_demo_shape": "带模型路由的并行证据抽取"
+    }
+  },
+  {
+    "key": "complex",
+    "name": "迭代式研究系统架构",
+    "task": "研究如何设计一个迭代式多智能体研究系统，使其能够拆解开放式问题、联网检索、交叉验证证据，并生成带引用追溯的长报告。",
+    "metadata": {
+      "tenant": "demo-lab",
+      "priority": "关键",
+      "source": "demo",
+      "expected_demo_shape": "critic 驱动的补充检索和带引用 Markdown 报告",
+      "report_format": "markdown"
+    }
+  }
+]

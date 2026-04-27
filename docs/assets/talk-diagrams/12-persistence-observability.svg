@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">持久化和观测</title>
+  <desc id="desc">Agent 平台将任务、步骤、日志、产物、记忆和 checkpoint 持久化并展示到前端。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#2563eb"/></marker>
+    <style>
+      text{font-family:Arial,"Noto Sans SC",sans-serif;fill:#17212b}.title{font-size:42px;font-weight:800}.label{font-size:25px;font-weight:800}.small{font-size:20px;fill:#52606d}.box{fill:#fff;stroke:#cbd5e1;stroke-width:2.5;rx:18}.agent{fill:#ecfdf5;stroke:#10b981}.store{fill:#fef3c7;stroke:#d97706}.front{fill:#eff6ff;stroke:#3b82f6}.line{stroke:#2563eb;stroke-width:4;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="#f8fafc"/>
+  <text x="70" y="82" class="title">持久化与可观测性</text>
+  <rect x="610" y="320" width="300" height="140" class="box"/><text x="677" y="380" class="label">Orchestrator</text><text x="652" y="418" class="small">统一调度与记录</text>
+  <g>
+    <rect x="90" y="150" width="210" height="70" class="agent"/><text x="145" y="194" class="label">Planner</text>
+    <rect x="90" y="270" width="210" height="70" class="agent"/><text x="126" y="314" class="label">Researcher</text>
+    <rect x="90" y="390" width="210" height="70" class="agent"/><text x="150" y="434" class="label">Critic</text>
+    <rect x="90" y="510" width="210" height="70" class="agent"/><text x="150" y="554" class="label">Writer</text>
+  </g>
+  <path d="M300 185 C435 190 530 315 610 350" class="line"/><path d="M300 305 C430 320 520 360 610 375" class="line"/><path d="M300 425 H610" class="line"/><path d="M300 545 C440 520 520 455 610 430" class="line"/>
+  <g>
+    <rect x="1050" y="130" width="240" height="76" class="store"/><text x="1100" y="178" class="label">tasks</text>
+    <rect x="1050" y="240" width="240" height="76" class="store"/><text x="1096" y="288" class="label">steps</text>
+    <rect x="1050" y="350" width="240" height="76" class="store"/><text x="1102" y="398" class="label">logs</text>
+    <rect x="1050" y="460" width="240" height="76" class="store"/><text x="1088" y="508" class="label">artifacts</text>
+    <rect x="1050" y="570" width="240" height="76" class="store"/><text x="1088" y="618" class="label">Memory</text>
+    <rect x="1050" y="680" width="240" height="76" class="store"/><text x="1076" y="728" class="label">Checkpoint</text>
+  </g>
+  <path d="M910 360 C980 260 1000 170 1050 168" class="line"/><path d="M910 380 C980 345 1000 280 1050 278" class="line"/><path d="M910 400 H1050" class="line"/><path d="M910 420 C980 455 1000 500 1050 498" class="line"/><path d="M910 440 C970 535 1000 600 1050 608" class="line"/><path d="M910 455 C960 620 1000 720 1050 718" class="line"/>
+  <rect x="610" y="650" width="300" height="120" class="front"/><text x="666" y="706" class="label">前端工作台</text><text x="645" y="740" class="small">报告 · 证据 · 时间线 · 日志</text>
+  <path d="M1050 388 C940 520 880 610 850 650" class="line"/>
+  <path d="M1050 498 C960 570 900 620 875 650" class="line"/>
+</svg>

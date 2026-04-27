@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">LangGraph 状态机</title>
+  <desc id="desc">LangGraph 中 plan、research、critic、human_review、write 的条件路由。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#2563eb"/></marker>
+    <style>
+      text{font-family:Arial,"Noto Sans SC",sans-serif;fill:#17212b}.title{font-size:42px;font-weight:800}.label{font-size:28px;font-weight:800}.small{font-size:20px;fill:#55616f}.node{fill:#fff;stroke:#b8c4d2;stroke-width:2.5;rx:18}.critic{fill:#fff7ed;stroke:#f97316}.write{fill:#ecfdf5;stroke:#10b981}.state{fill:#eff6ff;stroke:#3b82f6}.line{stroke:#2563eb;stroke-width:4;fill:none;marker-end:url(#arrow)}.loop{stroke:#f97316;stroke-width:4;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="#f8fafc"/>
+  <text x="70" y="82" class="title">LangGraph 状态机</text>
+  <text x="72" y="124" class="small">条件边把 Agent loop 变成显式状态流转</text>
+  <rect x="90" y="260" width="180" height="96" class="node"/><text x="132" y="318" class="label">plan</text>
+  <rect x="350" y="260" width="220" height="96" class="node"/><text x="398" y="318" class="label">research</text><text x="392" y="350" class="small">并行 workers</text>
+  <rect x="650" y="260" width="190" height="96" class="critic"/><text x="698" y="318" class="label">critic</text>
+  <rect x="930" y="260" width="180" height="96" class="write"/><text x="983" y="318" class="label">write</text>
+  <rect x="1190" y="260" width="150" height="96" class="node"/><text x="1235" y="318" class="label">END</text>
+  <path d="M270 308 H350" class="line"/><path d="M570 308 H650" class="line"/><path d="M840 308 H930" class="line"/><path d="M1110 308 H1190" class="line"/>
+  <text x="852" y="288" class="small">证据充分</text>
+  <path d="M720 260 C650 145 460 145 430 260" class="loop"/><text x="492" y="166" class="small">证据不足，继续 research</text>
+  <rect x="650" y="520" width="260" height="96" class="critic"/><text x="690" y="578" class="label">human_review</text>
+  <path d="M745 356 V520" class="loop"/><text x="765" y="444" class="small">轮次耗尽或质量低</text>
+  <path d="M910 568 C1030 560 1030 420 1015 356" class="line"/>
+  <rect x="230" y="690" width="1140" height="118" class="state"/>
+  <text x="270" y="738" class="label">ResearchGraphState</text>
+  <text x="270" y="780" class="small">task_id · context · topics · pending_topics · evidence_cards · assessment · round_index · max_research_rounds</text>
+</svg>

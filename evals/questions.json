@@ -1,0 +1,17 @@
+[
+  {
+    "id": "rag_coverage",
+    "question": "研究为什么单轮 RAG 在开放式技术问题中容易遗漏重要证据。",
+    "expected_topics": ["RAG", "证据", "覆盖"]
+  },
+  {
+    "id": "agent_routing_cost",
+    "question": "比较多模型路由策略在多智能体深度研究系统中的成本控制效果。",
+    "expected_topics": ["模型路由", "成本", "多智能体"]
+  },
+  {
+    "id": "chrome_search",
+    "question": "研究本机 Chrome 搜索如何降低 deep research 的搜索 API 成本。",
+    "expected_topics": ["Chrome", "搜索 API", "成本"]
+  }
+]

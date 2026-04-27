@@ -1,0 +1,65 @@
+environment: prod
+log_level: INFO
+log_file: logs/platform.log
+database_url: sqlite:///data/platform.db
+
+llm:
+  default_provider: local
+  simple_task_provider: local
+  complex_task_provider: openai
+  openai_nano_model: gpt-5-nano
+  openai_mini_model: gpt-5-mini
+  qwen_model: Qwen2.5-72B-Instruct-INT4
+  qwen_vllm_base_url:
+  qwen_vllm_api_key:
+  agent_provider_overrides:
+    planner: openai
+    researcher: openai_nano
+    critic: qwen
+    writer: openai_mini
+  fallback_providers:
+    - anthropic
+    - local
+  provider_blacklist: []
+  timeout_seconds: 20
+  token_threshold_for_complex: 500
+  cost_per_1k_tokens:
+    local: 0.0
+    openai: 0.01
+    openai_nano: 0.00005
+    openai_mini: 0.0006
+    anthropic: 0.003
+    openrouter: 0.00015
+    qwen: 0.0001
+
+retry:
+  max_retries: 2
+  backoff_seconds: 0.25
+
+search:
+  provider: auto
+  tavily_api_key:
+  searxng_url:
+  crawl4ai_base_directory: data/crawl4ai
+  timeout_seconds: 12
+  user_agent: IterativeResearchAgent/1.0
+
+research:
+  max_rounds: 2
+  min_evidence_per_topic: 2
+  evidence_window_size: 12
+  max_sources_per_query: 4
+
+queue:
+  backend: redis
+  redis_url: redis://redis:6379/0
+  redis_queue_name: matp:tasks
+  max_concurrent_tasks: 6
+  max_queue_size: 500
+
+agents:
+  enabled:
+    planner: true
+    researcher: true
+    critic: true
+    writer: true

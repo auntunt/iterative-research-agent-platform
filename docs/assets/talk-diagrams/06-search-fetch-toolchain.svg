@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">搜索和抓取工具链</title>
+  <desc id="desc">Researcher 从搜索 provider 到正文抓取再到证据卡片的工具链。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#2563eb"/></marker>
+    <style>
+      text{font-family:Arial,"Noto Sans SC",sans-serif;fill:#17212b}.title{font-size:42px;font-weight:800}.label{font-size:25px;font-weight:800}.small{font-size:20px;fill:#52606d}.box{fill:#fff;stroke:#cbd5e1;stroke-width:2.5;rx:18}.search{fill:#eff6ff;stroke:#3b82f6}.fetch{fill:#ecfdf5;stroke:#10b981}.card{fill:#fef3c7;stroke:#d97706}.fallback{fill:#fff7ed;stroke:#f97316}.line{stroke:#2563eb;stroke-width:4;fill:none;marker-end:url(#arrow)}.alt{stroke:#f97316;stroke-width:3.5;fill:none;marker-end:url(#arrow);stroke-dasharray:10 8}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="#f8fafc"/>
+  <text x="70" y="82" class="title">Researcher 工具调用链路</text>
+  <rect x="70" y="365" width="200" height="92" class="box"/><text x="113" y="420" class="label">Researcher</text>
+  <rect x="340" y="150" width="230" height="90" class="search"/><text x="395" y="204" class="label">SearXNG</text><text x="395" y="232" class="small">主搜索</text>
+  <rect x="340" y="300" width="230" height="90" class="fallback"/><text x="387" y="354" class="label">Playwright</text><text x="398" y="382" class="small">浏览器备份</text>
+  <rect x="340" y="450" width="230" height="90" class="fallback"/><text x="386" y="504" class="label">DuckDuckGo</text><text x="417" y="532" class="small">兜底</text>
+  <rect x="680" y="365" width="200" height="92" class="search"/><text x="720" y="420" class="label">URL 列表</text>
+  <rect x="980" y="260" width="240" height="90" class="fetch"/><text x="1037" y="314" class="label">Crawl4AI</text><text x="1012" y="342" class="small">Markdown 正文</text>
+  <rect x="980" y="465" width="240" height="90" class="fallback"/><text x="1018" y="519" class="label">httpx + HTML</text><text x="1033" y="547" class="small">轻量回退</text>
+  <rect x="1310" y="365" width="220" height="118" class="card"/><text x="1362" y="420" class="label">EvidenceCard</text><text x="1345" y="453" class="small">claim · summary</text><text x="1348" y="480" class="small">url · paragraph_id</text>
+  <path d="M270 410 C305 250 318 200 340 195" class="line"/><path d="M270 410 C310 365 315 345 340 345" class="alt"/><path d="M270 410 C310 470 318 495 340 495" class="alt"/>
+  <path d="M570 195 C630 240 650 350 680 395" class="line"/><path d="M570 345 C620 360 650 390 680 410" class="line"/><path d="M570 495 C630 490 650 440 680 425" class="line"/>
+  <path d="M880 410 C930 350 945 310 980 305" class="line"/><path d="M880 410 C930 450 945 505 980 510" class="alt"/>
+  <path d="M1220 305 C1270 330 1285 380 1310 405" class="line"/><path d="M1220 510 C1280 500 1288 455 1310 440" class="alt"/>
+</svg>

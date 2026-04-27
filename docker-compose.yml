@@ -1,0 +1,40 @@
+services:
+  api:
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      MATP_QUEUE_BACKEND: redis
+      MATP_REDIS_URL: redis://redis:6379/0
+      MATP_DATABASE_URL: sqlite:///data/platform.db
+    volumes:
+      - .:/app
+      - app-data:/app/data
+      - app-logs:/app/logs
+    depends_on:
+      - redis
+      - postgres
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: matp
+      POSTGRES_PASSWORD: matp
+      POSTGRES_DB: matp
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  app-data:
+  app-logs:
+  postgres-data:

@@ -1,0 +1,22 @@
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.7.0
+pydantic-settings>=2.2.1
+httpx>=0.27.0
+langgraph>=0.2.60
+PyYAML>=6.0.0
+redis>=5.0.0
+requests>=2.32.0
+pytest>=8.2.0
+pytest-asyncio>=0.23.0
+websockets>=12.0
+# --- v2.0 新增依赖 ---
+tiktoken>=0.7.0
+chromadb>=0.5.0
+langgraph-checkpoint-sqlite>=2.0.0
+# 浏览器本地搜索（安装后需执行: playwright install chromium）
+playwright>=1.45.0
+# 正文抓取与 Markdown 抽取
+crawl4ai>=0.4.24
+# 可选：本地嵌入模型（无 OpenAI Key 时自动使用）
+# sentence-transformers>=3.0.0

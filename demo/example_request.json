@@ -1,0 +1,8 @@
+{
+  "task": "研究迭代式多智能体系统如何缓解复杂 RAG 流程中的证据覆盖盲点",
+  "metadata": {
+    "priority": "普通",
+    "tenant": "demo",
+    "report_format": "markdown"
+  }
+}

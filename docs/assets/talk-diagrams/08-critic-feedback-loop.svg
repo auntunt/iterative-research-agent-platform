@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Critic 反馈闭环</title>
+  <desc id="desc">Critic 对证据卡片进行质量门控，并决定进入写作或追加检索。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#2563eb"/></marker>
+    <style>
+      text{font-family:Arial,"Noto Sans SC",sans-serif;fill:#17212b}.title{font-size:42px;font-weight:800}.label{font-size:26px;font-weight:800}.small{font-size:20px;fill:#52606d}.box{fill:#fff;stroke:#cbd5e1;stroke-width:2.5;rx:18}.critic{fill:#fff7ed;stroke:#f97316}.pass{fill:#ecfdf5;stroke:#10b981}.loop{fill:#eff6ff;stroke:#3b82f6}.line{stroke:#2563eb;stroke-width:4;fill:none;marker-end:url(#arrow)}.warn{stroke:#f97316;stroke-width:4;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="#f8fafc"/>
+  <text x="70" y="82" class="title">Critic 质量门控</text>
+  <rect x="90" y="350" width="260" height="120" class="box"/><text x="132" y="405" class="label">Evidence Cards</text><text x="132" y="442" class="small">结构化证据集</text>
+  <rect x="480" y="300" width="300" height="220" class="critic"/><text x="585" y="360" class="label">Critic</text><text x="535" y="420" class="small">覆盖度 coverage</text><text x="535" y="462" class="small">忠实度 faithfulness</text><text x="535" y="504" class="small">相关性 relevancy</text>
+  <path d="M350 410 H480" class="line"/>
+  <rect x="930" y="210" width="260" height="110" class="pass"/><text x="990" y="270" class="label">Writer</text><text x="965" y="304" class="small">证据充分</text>
+  <rect x="930" y="420" width="300" height="110" class="loop"/><text x="988" y="480" class="label">follow-up topics</text><text x="965" y="514" class="small">证据不足</text>
+  <rect x="930" y="630" width="300" height="110" class="critic"/><text x="980" y="690" class="label">Human Review</text><text x="962" y="724" class="small">轮次耗尽</text>
+  <path d="M780 360 C850 300 875 265 930 265" class="line"/><text x="820" y="300" class="small">通过</text>
+  <path d="M780 430 C850 450 875 475 930 475" class="warn"/><text x="815" y="462" class="small">补证据</text>
+  <path d="M780 500 C850 610 875 685 930 685" class="warn"/><text x="810" y="620" class="small">人工确认</text>
+  <path d="M930 475 C720 760 280 690 220 470" class="warn"/><text x="392" y="740" class="small">返回 Researcher 追加检索</text>
+  <rect x="1310" y="210" width="210" height="110" class="pass"/><text x="1350" y="270" class="label">正式报告</text>
+  <path d="M1190 265 H1310" class="line"/>
+  <path d="M1230 685 C1350 610 1410 440 1415 320" class="line"/>
+</svg>

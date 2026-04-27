@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">RAG 缓存闭环</title>
+  <desc id="desc">新研究主题先查 RAG 缓存，未命中时走网络研究，完成后再入库。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2,2 L10,6 L2,10 Z" fill="#0f766e"/></marker>
+    <style>
+      text{font-family:Arial,"Noto Sans SC",sans-serif;fill:#17212b}.title{font-size:42px;font-weight:800}.label{font-size:25px;font-weight:800}.small{font-size:20px;fill:#52606d}.box{fill:#fff;stroke:#cbd5e1;stroke-width:2.5;rx:18}.rag{fill:#fef3c7;stroke:#d97706}.web{fill:#eff6ff;stroke:#3b82f6}.card{fill:#ecfdf5;stroke:#10b981}.line{stroke:#0f766e;stroke-width:4;fill:none;marker-end:url(#arrow)}.miss{stroke:#f97316;stroke-width:4;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="#f8fafc"/>
+  <text x="70" y="82" class="title">RAG 是研究证据缓存层</text>
+  <rect x="80" y="360" width="240" height="100" class="box"/><text x="132" y="420" class="label">新研究主题</text>
+  <rect x="420" y="340" width="260" height="140" class="rag"/><text x="490" y="400" class="label">RAG 预查询</text><text x="466" y="438" class="small">向量库相似检索</text>
+  <rect x="780" y="210" width="260" height="100" class="card"/><text x="824" y="270" class="label">缓存证据卡</text>
+  <rect x="780" y="520" width="260" height="100" class="web"/><text x="826" y="580" class="label">Web Research</text>
+  <rect x="1140" y="360" width="260" height="100" class="card"/><text x="1185" y="420" class="label">EvidenceCard</text>
+  <rect x="1130" y="650" width="280" height="110" class="rag"/><text x="1168" y="708" class="label">Vector Store</text><text x="1160" y="740" class="small">chunk · embed · upsert</text>
+  <path d="M320 410 H420" class="line"/><path d="M680 380 C720 300 740 260 780 260" class="line"/><text x="695" y="315" class="small">命中</text>
+  <path d="M680 440 C720 510 740 570 780 570" class="miss"/><text x="695" y="530" class="small">未命中</text>
+  <path d="M1040 260 C1110 280 1130 350 1140 390" class="line"/><path d="M1040 570 C1110 555 1130 470 1140 430" class="line"/>
+  <path d="M1270 460 V650" class="line"/>
+  <path d="M1130 705 C765 780 445 690 525 480" class="line"/>
+  <text x="520" y="805" class="small">任务完成后入库，后续相似任务可复用证据</text>
+</svg>
