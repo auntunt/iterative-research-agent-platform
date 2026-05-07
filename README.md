@@ -4,6 +4,19 @@
 
 项目默认可以在没有付费搜索 API 的情况下运行：搜索侧支持自托管 `SearXNG`，并用 `Playwright`、`DuckDuckGo` 作为后备；抓取侧优先使用 `Crawl4AI` 做正文抽取和 Markdown 清洗；模型侧保留路由、延迟、token、成本、重试和 trace 统计链路。
 
+## 文档导航
+
+| 文档 | 适合谁 |
+| --- | --- |
+| 本 README | 快速了解能力、本地运行、API 与配置速查 |
+| [`docs/TECHNICAL_OVERVIEW.zh-CN.md`](docs/TECHNICAL_OVERVIEW.zh-CN.md) | 技术栈、代码入口、与手册章节的对应关系（练手项目向导读） |
+| [`docs/gitbook/README.md`](docs/gitbook/README.md) | 完整的工程设计手册（多章节，适合深度阅读与展示） |
+
+## 隐私与上传 GitHub 前检查
+
+- **密钥与本地环境**：只在本机维护 `.env`（从 [`.env.example`](.env.example) 复制）。不要把真实 API Key、内网地址或个人数据提交进仓库。`.gitignore` 已忽略 `.env`、`.env.*`（并显式保留 `.env.example`）、`data/`、`logs/`、`artifacts/`、评测结果目录等；若使用 [direnv](https://direnv.net/)，`.envrc` 也被忽略。
+- **推送前建议**：执行 `git status`，确认没有误加入 `.env`、数据库文件或含敏感内容的运行产物；可用 `git check-ignore -v .env` 验证忽略规则。更完整的提交清单见 [`docs/gitbook/12-github-showcase.md`](docs/gitbook/12-github-showcase.md)。
+
 ## 架构
 
 ```mermaid
@@ -64,7 +77,7 @@ flowchart LR
 
 ## 工程设计文档
 
-完整 GitBook 风格设计手册见 [`docs/gitbook/README.md`](docs/gitbook/README.md)，覆盖 Agent 开发设计、多 Agent 编排、工具调用、RAG 系统、记忆与上下文血统、状态管理、模型路由、证据追踪、可观测性和 GitHub 展示建议。
+完整 GitBook 风格设计手册见 [`docs/gitbook/README.md`](docs/gitbook/README.md)，覆盖 Agent 开发设计、多 Agent 编排、工具调用、RAG 系统、记忆与上下文血统、状态管理、模型路由、证据追踪、可观测性和 GitHub 展示建议。若希望先读一篇浓缩的「从代码入口出发」导读，见 [`docs/TECHNICAL_OVERVIEW.zh-CN.md`](docs/TECHNICAL_OVERVIEW.zh-CN.md)。
 
 ## 目录结构
 

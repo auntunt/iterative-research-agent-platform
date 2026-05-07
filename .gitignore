@@ -1,5 +1,15 @@
+# Secrets and local environment — copy from .env.example only; never commit real keys.
 .env
+.env.*
+!.env.example
+.envrc
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+
 .venv/
+venv/
 data/
 logs/
 artifacts/
