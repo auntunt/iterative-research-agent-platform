@@ -9,6 +9,7 @@
 | 文档 | 适合谁 |
 | --- | --- |
 | 本 README | 快速了解能力、本地运行、API 与配置速查 |
+| [`docs/html/index.html`](docs/html/index.html) | HTML 阅读版，固定目录、章节大纲和更好的长文阅读体验 |
 | [`docs/TECHNICAL_OVERVIEW.zh-CN.md`](docs/TECHNICAL_OVERVIEW.zh-CN.md) | 技术栈、代码入口、与手册章节的对应关系（练手项目向导读） |
 | [`docs/gitbook/README.md`](docs/gitbook/README.md) | 完整的工程设计手册（多章节，适合深度阅读与展示） |
 
@@ -77,7 +78,7 @@ flowchart LR
 
 ## 工程设计文档
 
-完整 GitBook 风格设计手册见 [`docs/gitbook/README.md`](docs/gitbook/README.md)，覆盖 Agent 开发设计、多 Agent 编排、工具调用、RAG 系统、记忆与上下文血统、状态管理、模型路由、证据追踪、可观测性和 GitHub 展示建议。若希望先读一篇浓缩的「从代码入口出发」导读，见 [`docs/TECHNICAL_OVERVIEW.zh-CN.md`](docs/TECHNICAL_OVERVIEW.zh-CN.md)。
+完整 HTML 阅读版见 [`docs/html/index.html`](docs/html/index.html)，覆盖 Agent 开发设计、多 Agent 编排、工具调用、RAG 系统、记忆与上下文血统、状态管理、模型路由、证据追踪、可观测性和 GitHub 展示建议。Markdown 源文档保留在 [`docs/gitbook/README.md`](docs/gitbook/README.md)，若希望先读一篇浓缩的「从代码入口出发」导读，见 [`docs/TECHNICAL_OVERVIEW.zh-CN.md`](docs/TECHNICAL_OVERVIEW.zh-CN.md)。
 
 ## 目录结构
 

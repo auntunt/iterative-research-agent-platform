@@ -1,0 +1,1143 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>迭代式研究智能体平台 | HTML 文档</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <a class="brand" href="#top">
+          <span class="brand-mark">IR</span>
+          <span>
+            <strong>研究智能体文档</strong>
+            <small>HTML 阅读版</small>
+          </span>
+        </a>
+        <label class="search-label" for="navSearch">目录过滤</label>
+        <input id="navSearch" class="nav-search" type="search" placeholder="输入章节关键词" />
+        <nav class="sidebar-nav" aria-label="文档章节">
+<div class="nav-group"><div class="nav-group-title">快速导读</div>
+<a href="#技术导读" data-doc-link="技术导读">技术导读</a>
+<a href="#工程设计手册" data-doc-link="工程设计手册">工程设计手册</a>
+</div>
+<div class="nav-group"><div class="nav-group-title">工程设计</div>
+<a href="#1-系统总览" data-doc-link="1-系统总览">1. 系统总览</a>
+<a href="#2-agent-开发设计" data-doc-link="2-agent-开发设计">2. Agent 开发设计</a>
+<a href="#3-多-agent-编排" data-doc-link="3-多-agent-编排">3. 多 Agent 编排</a>
+<a href="#4-状态管理" data-doc-link="4-状态管理">4. 状态管理</a>
+<a href="#5-工具调用" data-doc-link="5-工具调用">5. 工具调用</a>
+<a href="#6-rag-知识系统" data-doc-link="6-rag-知识系统">6. RAG 知识系统</a>
+<a href="#7-记忆系统与上下文血统" data-doc-link="7-记忆系统与上下文血统">7. 记忆系统与上下文血统</a>
+<a href="#8-模型路由" data-doc-link="8-模型路由">8. 模型路由</a>
+<a href="#9-证据追踪" data-doc-link="9-证据追踪">9. 证据追踪</a>
+<a href="#10-可观测性与产物" data-doc-link="10-可观测性与产物">10. 可观测性与产物</a>
+<a href="#11-api-前端与演示" data-doc-link="11-api-前端与演示">11. API、前端与演示</a>
+<a href="#12-github-展示与提交建议" data-doc-link="12-github-展示与提交建议">12. GitHub 展示与提交建议</a>
+</div>
+</nav>
+      </aside>
+      <main class="content" id="top">
+        <header class="hero">
+          <p class="eyebrow">Iterative Research Agent Platform</p>
+          <h1>工程设计文档 HTML 阅读版</h1>
+          <p>
+            这一版把原有 Markdown/GitBook 内容整理成静态 HTML，提供固定章节导航、当前章节目录、
+            表格与代码块优化，适合 GitHub Pages、浏览器本地阅读和项目复习。
+          </p>
+          <div class="hero-actions">
+            <a href="#技术导读">从技术导读开始</a>
+            <a href="#6-rag-知识系统">查看 RAG 知识系统</a>
+          </div>
+        </header>
+        <article class="doc-section" id="技术导读" data-title="技术导读"><div class="source-path">docs/TECHNICAL_OVERVIEW.zh-CN.md</div>
+<h1 id="技术导读-练手项目向"><a class="anchor" href="#技术导读-练手项目向" aria-label="章节链接">#</a>技术导读（练手项目向）</h1>
+<p>本文是面向「想快速理解实现细节、准备面试展示或开源阅读」的一页式导读，与 <a href="#工程设计手册"><code>docs/gitbook/README.md</code></a> 中的章节手册互补：这里偏「从代码入口出发看什么」，手册偏「为什么这样设计」。</p>
+<h2 id="项目一句话"><a class="anchor" href="#项目一句话" aria-label="章节链接">#</a>项目一句话</h2>
+<p>把开放式研究问题拆成多主题，并行 <strong>搜索 + 抓取 → 证据卡片 → Critic 审查 → 带引用的中文报告</strong>，并把 <strong>LangGraph 编排、工具调用、RAG、记忆、模型路由、Trace/产物</strong> 串成一条可观测链路。定位是 <strong>Agent 工程练习平台</strong>，不强调商业成熟度。</p>
+<h2 id="技术栈-务实版"><a class="anchor" href="#技术栈-务实版" aria-label="章节链接">#</a>技术栈（务实版）</h2>
+<div class="table-wrap"><table><thead><tr><th>层次</th><th>选型</th><th>说明</th></tr></thead><tbody><tr><td>API</td><td>FastAPI</td><td>REST、任务入队、RAG/证据/指标接口</td></tr><tr><td>编排</td><td>LangGraph <code>StateGraph</code></td><td>Planner → Researcher ↔ Critic → Writer 条件分支</td></tr><tr><td>持久化</td><td>SQLite（默认）</td><td>任务、步骤、日志、图状态等</td></tr><tr><td>队列</td><td>内存 / Redis 可切换</td><td>后台执行任务，避免长请求阻塞</td></tr><tr><td>向量库</td><td>Chroma（可持久化目录）</td><td>RAG 知识入库与检索</td></tr><tr><td>搜索/抓取</td><td>Tavily / SearXNG / Playwright / DuckDuckGo；抓取侧 Crawl4AI 优先</td><td>详见 <a href="../../README.md"><code>README.md</code></a> 与 gitbook 工具章节</td></tr><tr><td>前端</td><td>静态 HTML/JS</td><td>研究工作台与演示</td></tr></tbody></table></div>
+<p>配置加载顺序：<strong>YAML（如 <code>config/dev.yaml</code>）→ <code>MATP_</code> 前缀环境变量覆盖</strong>。密钥只放在本地 <code>.env</code>，仓库内仅有 <a href="../../.env.example"><code>.env.example</code></a>。</p>
+<h2 id="请求生命周期-简化"><a class="anchor" href="#请求生命周期-简化" aria-label="章节链接">#</a>请求生命周期（简化）</h2>
+<pre class="code-block" data-lang="mermaid"><code>sequenceDiagram
+  participant U as 用户/API
+  participant API as FastAPI
+  participant Q as 队列
+  participant O as Orchestrator
+  participant G as LangGraph
+  U-&gt;&gt;API: POST /run_task
+  API-&gt;&gt;Q: 入队
+  Q-&gt;&gt;O: 执行
+  O-&gt;&gt;G: 启动状态机
+  G-&gt;&gt;G: Planner / Researcher / Critic / Writer
+  O-&gt;&gt;O: 写 DB、Trace、Memory、可选 RAG
+  U-&gt;&gt;API: GET /task/{id}、证据与 artifacts</code></pre>
+<h2 id="代码从哪里读起"><a class="anchor" href="#代码从哪里读起" aria-label="章节链接">#</a>代码从哪里读起</h2>
+<div class="table-wrap"><table><thead><tr><th>想了解</th><th>建议入口</th></tr></thead><tbody><tr><td>应用启动与路由挂载</td><td><code>app/main.py</code></td></tr><tr><td>HTTP 路由与任务/RAG 接口</td><td><code>app/api/routes.py</code></td></tr><tr><td>研究主流程与 LangGraph</td><td><code>app/services/orchestrator.py</code></td></tr><tr><td>Planner / Researcher / Critic / Writer</td><td><code>app/agents/*.py</code></td></tr><tr><td>Web 搜索、抓取、沙盒等工具</td><td><code>app/tools/</code></td></tr><tr><td>任务状态与队列</td><td><code>app/services/task_manager.py</code>、<code>app/services/queue.py</code></td></tr><tr><td>RAG 向量与入库</td><td><code>app/rag/</code></td></tr><tr><td>类型与领域模型</td><td><code>app/models/schemas.py</code></td></tr></tbody></table></div>
+<p>测试与评测：<code>tests/</code>、<code>evals/run_evals.py</code>。前端：<code>frontend/</code>。</p>
+<h2 id="与-gitbook-手册的对应关系"><a class="anchor" href="#与-gitbook-手册的对应关系" aria-label="章节链接">#</a>与 GitBook 手册的对应关系</h2>
+<p>手册目录见 <a href="#工程设计手册"><code>docs/gitbook/README.md</code></a>。若时间有限，可按下面顺序读：</p>
+<ol>
+<li><a href="#1-系统总览">系统总览</a> — 边界与架构图  </li>
+<li><a href="#3-多-agent-编排">多 Agent 编排</a> — 状态机与协作  </li>
+<li><a href="#9-证据追踪">证据追踪</a> — EvidenceCard、引用链  </li>
+<li><a href="#12-github-展示与提交建议">GitHub 展示建议</a> — 上传与表述口径  </li>
+</ol>
+<p>其余章节（工具调用、状态管理、RAG、记忆、模型路由、可观测性）在深入某一专题时再翻。</p>
+<h2 id="隐私与开源上传注意"><a class="anchor" href="#隐私与开源上传注意" aria-label="章节链接">#</a>隐私与开源上传注意</h2>
+<ul>
+<li><strong>永远不要提交</strong> <code>.env</code>、含真实 API Key 的备份文件、本地数据库目录下的业务数据、运行产物中的敏感查询结果。  </li>
+<li>仓库内应保留 <strong><code>.env.example</code></strong>（无真实密钥），并在 README 中说明「复制后本地填写」。  </li>
+<li>推送前建议：<code>git status</code> 确认无 <code>.env</code> / <code>data/</code> 里误加的私密文件；必要时用 <code>git check-ignore -v &lt;路径&gt;</code> 验证忽略规则。</li>
+</ul>
+<p>详见项目根目录 <code>.gitignore</code> 与 <a href="#12-github-展示与提交建议"><code>docs/gitbook/12-github-showcase.md</code></a>。</p>
+<h2 id="刻意不做-可后续加强-适合写在-readme-或面试里"><a class="anchor" href="#刻意不做-可后续加强-适合写在-readme-或面试里" aria-label="章节链接">#</a>刻意不做 / 可后续加强（适合写在 README 或面试里）</h2>
+<ul>
+<li>生产级多租户鉴权、配额与审计  </li>
+<li>搜索质量与反爬对抗的体系化评测  </li>
+<li>更强的人机协同（HITL）与审批流  </li>
+</ul>
+<p>把「已跑通的部分」和「诚实边界」写清楚，比夸大成熟度更可展示工程思维。</p>
+</article><article class="doc-section" id="工程设计手册" data-title="工程设计手册"><div class="source-path">docs/gitbook/README.md</div>
+<h1 id="迭代式深度研究智能体平台-工程设计手册"><a class="anchor" href="#迭代式深度研究智能体平台-工程设计手册" aria-label="章节链接">#</a>迭代式深度研究智能体平台：工程设计手册</h1>
+<p>这份 GitBook 文档用于讲清楚本项目的 Agent 工程设计，而不是演讲稿脚本。它面向复习、面试展示和开源仓库阅读，重点解释系统为什么这样拆、每层如何协作、状态如何流转、证据如何追踪，以及 RAG、记忆、模型路由和工具调用在真实工程中的位置。</p>
+<p>这个项目的定位是练手和复习型项目，不刻意包装成成熟商业产品。它的价值在于把 Agent 开发中常见的关键模块放到一条完整链路里：用户提交一个开放式研究问题后，系统会把问题拆成多个研究主题，并行检索网页，抽取段落级证据卡片，再由 Critic 判断证据是否足够。如果证据不足，流程会追加检索；如果证据可用，Writer 会基于证据卡片生成带引用的中文 Markdown 报告。</p>
+<h2 id="项目定位"><a class="anchor" href="#项目定位" aria-label="章节链接">#</a>项目定位</h2>
+<p>本项目比较适合用一句话概括：</p>
+<blockquote>一个用于练习和复盘 Agent 工程能力的多智能体研究平台，重点不是追求单点功能极致，而是把规划、工具调用、RAG、记忆、状态管理、模型路由、证据追踪和可观测性串成一套能跑通、能讲清、能继续扩展的系统。</blockquote>
+<p>因此，阅读这份文档时要抓住两个重点：</p>
+<ul>
+<li>它不是生产级系统，仍然有很多可以继续加强的地方，比如权限隔离、评测体系、前端体验、异常场景覆盖和真实搜索质量。</li>
+<li>它不是单文件玩具 Demo，而是一个刻意把 Agent 工程关键概念拆开实现、再组合起来的练习项目。</li>
+</ul>
+<h2 id="适合展示的关键词"><a class="anchor" href="#适合展示的关键词" aria-label="章节链接">#</a>适合展示的关键词</h2>
+<ul>
+<li>Agent 生命周期：<code>plan -&gt; act -&gt; observe</code></li>
+<li>LangGraph 状态机：<code>plan -&gt; research -&gt; critic -&gt; write</code></li>
+<li>多智能体协作：Planner、Researcher、Critic、Writer</li>
+<li>工具调用：Web Search、Web Fetch、Document Reader、Markdown Render</li>
+<li>RAG 缓存：任务完成后入库，后续研究前预查询</li>
+<li>记忆系统：事件记忆、长期 KV 记忆、滚动摘要、上下文压缩</li>
+<li>证据追踪：EvidenceCard、Citation、段落 ID、引用索引</li>
+<li>模型路由：按复杂度、Agent 类型、Token 数和 Provider 健康度选择模型</li>
+<li>状态管理：TaskState、StepState、TaskGraph、Checkpoint、Human-in-the-loop</li>
+<li>可观测性：日志、Trace、Metrics、Artifacts、Routing Log</li>
+<li>项目定位：练手、复习、展示技术整合能力，而不是过度包装成熟度</li>
+</ul>
+<h2 id="快速阅读路径"><a class="anchor" href="#快速阅读路径" aria-label="章节链接">#</a>快速阅读路径</h2>
+<p>如果只想快速理解项目，推荐按下面顺序阅读：</p>
+<ol>
+<li><a href="#1-系统总览">系统总览</a></li>
+<li><a href="#2-agent-开发设计">Agent 开发设计</a></li>
+<li><a href="#3-多-agent-编排">多 Agent 编排</a></li>
+<li><a href="#9-证据追踪">证据追踪</a></li>
+<li><a href="#12-github-展示与提交建议">GitHub 展示与提交建议</a></li>
+</ol>
+<p>如果要准备面试或复盘，则建议完整读完所有章节。</p>
+</article><article class="doc-section" id="1-系统总览" data-title="1. 系统总览"><div class="source-path">docs/gitbook/01-system-overview.md</div>
+<h1 id="1-系统总览-2"><a class="anchor" href="#1-系统总览-2" aria-label="章节链接">#</a>1. 系统总览</h1>
+<p>本项目是一个面向开放式问题的多智能体深度研究练习平台。它不是把用户问题直接丢给一个大模型生成答案，而是把研究过程拆成可追踪的工程步骤：规划、检索、证据抽取、证据审查、报告生成、产物导出。</p>
+<h2 id="核心问题"><a class="anchor" href="#核心问题" aria-label="章节链接">#</a>核心问题</h2>
+<p>普通 LLM 问答在复杂研究任务里常见三个问题：</p>
+<ul>
+<li>结论来源不清楚，难以确认每句话是否有证据支撑。</li>
+<li>一次性生成容易遗漏关键角度，尤其是开放式问题。</li>
+<li>工具调用、模型选择、失败重试和成本统计缺少工程闭环。</li>
+</ul>
+<p>这个项目的设计目标是把这些问题拆开练习：Planner 负责拆解问题，Researcher 负责找证据，Critic 负责审查证据，Writer 负责基于证据写报告，Orchestrator 负责状态流转和失败处理。它更强调“把 Agent 工程能力串起来”，而不是声称每个模块都已经达到成熟生产标准。</p>
+<h2 id="总体架构"><a class="anchor" href="#总体架构" aria-label="章节链接">#</a>总体架构</h2>
+<pre class="code-block" data-lang="mermaid"><code>flowchart LR
+  UI[中文研究工作台] --&gt; API[FastAPI API]
+  API --&gt; Queue[TaskQueue]
+  API --&gt; DB[(SQLite Task DB)]
+  Queue --&gt; Orchestrator[Orchestrator]
+  Orchestrator --&gt; Graph[LangGraph StateGraph]
+  Graph --&gt; Planner[PlannerAgent]
+  Graph --&gt; Researcher[ResearchAgent]
+  Researcher --&gt; Search[WebSearchTool]
+  Researcher --&gt; Fetch[WebFetchTool]
+  Researcher --&gt; Cards[EvidenceCard]
+  Cards --&gt; Critic[CriticAgent]
+  Critic --&gt;|证据不足| Researcher
+  Critic --&gt;|证据充分| Writer[WritingAgent]
+  Writer --&gt; Report[Markdown Report]
+  Orchestrator --&gt; Memory[MemoryStore]
+  Orchestrator --&gt; RAG[RAG Vector Store]
+  Orchestrator --&gt; Logs[Logs and Metrics]</code></pre>
+<h2 id="运行链路"><a class="anchor" href="#运行链路" aria-label="章节链接">#</a>运行链路</h2>
+<p>一次任务的主链路如下：</p>
+<ol>
+<li>用户在前端或 API 提交任务。</li>
+<li><code>TaskManager</code> 创建 <code>TaskState</code>，记录任务 ID、Trace ID、状态和元数据。</li>
+<li><code>TaskQueue</code> 把任务交给后台执行，避免 API 请求长时间阻塞。</li>
+<li><code>Orchestrator</code> 启动 LangGraph 状态机。</li>
+<li><code>PlannerAgent</code> 生成研究主题和任务图。</li>
+<li><code>ResearchAgent</code> 对每个主题并行调用搜索和抓取工具。</li>
+<li>系统把来源正文转成 <code>EvidenceCard</code>。</li>
+<li><code>CriticAgent</code> 检查证据覆盖度、引用完整性和相关性。</li>
+<li>如果证据不足，Critic 生成 follow-up topics，流程回到 Research。</li>
+<li>如果证据足够，<code>WritingAgent</code> 生成带引用的 Markdown 报告。</li>
+<li>任务结果、步骤、工具调用、模型调用、日志和指标持久化。</li>
+<li>用户可通过 API 导出报告、证据卡片、引用、Trace 和 Metrics。</li>
+</ol>
+<h2 id="项目边界"><a class="anchor" href="#项目边界" aria-label="章节链接">#</a>项目边界</h2>
+<p>这个项目更像“研究型 Agent 工程练习平台”，不是通用聊天机器人，也不是成熟生产系统。它的优势在于流程清晰、状态可见、证据可追踪，并且把多个 Agent 技术点组合到一条完整链路中；代价是任务类型更聚焦，主要适合研究报告、资料梳理、技术调研和方案比较。</p>
+<p>从 GitHub 展示角度看，建议坦诚说明它是练手项目。重点讲清楚自己为什么这样拆模块、每个模块解决什么问题、哪些地方已经跑通、哪些地方未来还可以增强。这样的表述比直接包装成“企业级系统”更可信。</p>
+<h2 id="代码入口"><a class="anchor" href="#代码入口" aria-label="章节链接">#</a>代码入口</h2>
+<ul>
+<li>应用入口：<code>app/main.py</code></li>
+<li>API 路由：<code>app/api/routes.py</code></li>
+<li>编排核心：<code>app/services/orchestrator.py</code></li>
+<li>Agent 基类：<code>app/agents/base_agent.py</code></li>
+<li>四类 Agent：<code>app/agents/planner.py</code>、<code>researcher.py</code>、<code>critic.py</code>、<code>writer.py</code></li>
+<li>数据模型：<code>app/models/schemas.py</code></li>
+<li>工具层：<code>app/tools/</code></li>
+<li>RAG 层：<code>app/rag/</code></li>
+<li>记忆层：<code>app/services/memory.py</code></li>
+</ul>
+</article><article class="doc-section" id="2-agent-开发设计" data-title="2. Agent 开发设计"><div class="source-path">docs/gitbook/02-agent-development-design.md</div>
+<h1 id="2-agent-开发设计-2"><a class="anchor" href="#2-agent-开发设计-2" aria-label="章节链接">#</a>2. Agent 开发设计</h1>
+<p>本项目的 Agent 设计采用统一基类加专用子类的方式。所有 Agent 都继承 <code>BaseAgent</code>，因此它们拥有一致的执行生命周期、模型调用入口、工具调用入口和返回结构。</p>
+<h2 id="agent-生命周期"><a class="anchor" href="#agent-生命周期" aria-label="章节链接">#</a>Agent 生命周期</h2>
+<p><code>BaseAgent.run()</code> 定义了统一流程：</p>
+<pre class="code-block" data-lang="text"><code>plan -&gt; act -&gt; observe</code></pre>
+<p>含义如下：</p>
+<ul>
+<li><code>plan</code>：确定当前 Agent 的目标、可用工具、成功标准或输入约束。</li>
+<li><code>act</code>：真正执行任务，可能调用 LLM，也可能调用工具。</li>
+<li><code>observe</code>：检查执行结果，例如是否有输出、工具是否成功、调用了几次 LLM。</li>
+</ul>
+<p>这个设计比“直接写一个函数调用 LLM”更适合练手和工程展示，因为每个 Agent 的行为都被拆成可记录、可测试、可扩展的阶段。</p>
+<h2 id="baseagent-的职责"><a class="anchor" href="#baseagent-的职责" aria-label="章节链接">#</a>BaseAgent 的职责</h2>
+<p><code>BaseAgent</code> 主要提供四类能力：</p>
+<ul>
+<li>生命周期模板：统一 <code>run()</code> 方法。</li>
+<li>工具管理：初始化时接收工具列表，并通过工具名调用。</li>
+<li>模型调用：统一走 <code>LLMRouter.generate()</code>。</li>
+<li>输出封装：返回 <code>AgentRun</code>，包含 Agent 输出、工具调用、模型使用和路由决策。</li>
+</ul>
+<p>核心返回对象是 <code>AgentRun</code>：</p>
+<pre class="code-block" data-lang="text"><code>AgentRun
+  output: AgentOutput
+  llm_usage: list[LLMUsage]
+  tool_calls: list[ToolResult]
+  metadata: dict
+  routing_decisions: list[RoutingDecision]</code></pre>
+<p>这让每次 Agent 执行都可以被写入数据库、展示到前端、导出到产物文件，或者用于后续审计。</p>
+<h2 id="agentoutput"><a class="anchor" href="#agentoutput" aria-label="章节链接">#</a>AgentOutput</h2>
+<p>每个 Agent 的主要输出都封装为 <code>AgentOutput</code>：</p>
+<pre class="code-block" data-lang="text"><code>thought  -&gt; 本步骤的思考或执行摘要
+action   -&gt; 结构化动作名称
+result   -&gt; 面向用户或下游 Agent 的文本结果
+metadata -&gt; 给系统内部使用的结构化数据</code></pre>
+<p>例如 Researcher 的 <code>result</code> 是主题摘要，而 <code>metadata</code> 里会包含真正给后续节点使用的 <code>evidence_cards</code>。</p>
+<h2 id="为什么不用完全自由-react"><a class="anchor" href="#为什么不用完全自由-react" aria-label="章节链接">#</a>为什么不用完全自由 ReAct</h2>
+<p>项目没有让 Agent 自由地无限循环“思考、工具、观察”，而是把 Agent 放进受控状态机。原因是：</p>
+<ul>
+<li>研究报告任务需要稳定产物，而不是开放式聊天。</li>
+<li>每个阶段的输入输出需要结构化，方便测试和展示。</li>
+<li>工具调用和模型调用需要记录成本、延迟和失败原因。</li>
+<li>Critic 的反馈循环由 Orchestrator 控制，避免单个 Agent 自行失控。</li>
+</ul>
+<p>因此，本项目是“工程约束下的 Agent”，不是“完全自治的 Agent”。这对练手项目反而更有价值，因为它展示的是如何把 Agent 生命周期、工具调用、结构化输出和状态编排组合起来，而不是只展示一次模型调用。</p>
+<h2 id="四类-agent-的分工"><a class="anchor" href="#四类-agent-的分工" aria-label="章节链接">#</a>四类 Agent 的分工</h2>
+<div class="table-wrap"><table><thead><tr><th>Agent</th><th>核心职责</th><th>主要输出</th></tr></thead><tbody><tr><td>PlannerAgent</td><td>拆解开放问题，生成研究主题和任务图</td><td><code>ResearchTopic</code>、<code>TaskGraph</code></td></tr><tr><td>ResearchAgent</td><td>搜索、抓取、清洗、抽取证据</td><td><code>EvidenceCard</code></td></tr><tr><td>CriticAgent</td><td>判断证据是否足够，生成补充检索主题</td><td><code>CriticAssessment</code></td></tr><tr><td>WritingAgent</td><td>基于证据生成最终报告</td><td>Markdown 报告</td></tr></tbody></table></div>
+<h2 id="agent-扩展方式"><a class="anchor" href="#agent-扩展方式" aria-label="章节链接">#</a>Agent 扩展方式</h2>
+<p>新增一个 Agent 通常需要三步：</p>
+<ol>
+<li>继承 <code>BaseAgent</code>，实现自己的 <code>plan()</code> 和 <code>act()</code>。</li>
+<li>在 <code>Orchestrator.__init__()</code> 中注册 Agent。</li>
+<li>在 LangGraph 状态图中新增节点或条件边。</li>
+</ol>
+<p>如果新 Agent 需要工具，则在初始化时传入工具实例：</p>
+<pre class="code-block" data-lang="python"><code>CustomAgent(llm_router, tools=[SomeTool(settings)])</code></pre>
+<p>如果新 Agent 只是做模型判断，则可以不传工具，直接使用 <code>_generate()</code>。</p>
+</article><article class="doc-section" id="3-多-agent-编排" data-title="3. 多 Agent 编排"><div class="source-path">docs/gitbook/03-multi-agent-orchestration.md</div>
+<h1 id="3-多-agent-编排-2"><a class="anchor" href="#3-多-agent-编排-2" aria-label="章节链接">#</a>3. 多 Agent 编排</h1>
+<p>多 Agent 系统的难点不在于创建多个类，而在于控制它们什么时候运行、共享什么状态、失败后怎么恢复、如何避免重复工作。本项目把这些问题集中放在 <code>Orchestrator</code> 和 LangGraph 状态机里处理。</p>
+<h2 id="编排入口"><a class="anchor" href="#编排入口" aria-label="章节链接">#</a>编排入口</h2>
+<p>核心类是 <code>app/services/orchestrator.py</code> 中的 <code>Orchestrator</code>。它负责：</p>
+<ul>
+<li>初始化 LLMRouter。</li>
+<li>初始化四类 Agent。</li>
+<li>初始化可选 RAG 组件。</li>
+<li>初始化 LangGraph Checkpointer。</li>
+<li>构建任务状态图。</li>
+<li>执行任务、恢复任务、记录日志和指标。</li>
+</ul>
+<h2 id="langgraph-状态图"><a class="anchor" href="#langgraph-状态图" aria-label="章节链接">#</a>LangGraph 状态图</h2>
+<p>项目使用 <code>StateGraph</code> 定义外层工作流：</p>
+<pre class="code-block" data-lang="text"><code>plan -&gt; research -&gt; critic -&gt; write -&gt; END
+                   |
+                   | evidence insufficient
+                   v
+                research
+
+                   |
+                   | max rounds reached or low confidence
+                   v
+              human_review -&gt; write</code></pre>
+<p>状态图包含五个节点：</p>
+<ul>
+<li><code>plan</code>：生成研究主题。</li>
+<li><code>research</code>：并行执行检索和证据抽取。</li>
+<li><code>critic</code>：评估证据充分性。</li>
+<li><code>human_review</code>：人工审核断点。</li>
+<li><code>write</code>：生成最终报告。</li>
+</ul>
+<h2 id="条件路由"><a class="anchor" href="#条件路由" aria-label="章节链接">#</a>条件路由</h2>
+<p>Critic 完成后，系统调用 <code>_route_after_critic()</code> 决定下一步：</p>
+<pre class="code-block" data-lang="text"><code>assessment.sufficient == true
+  -&gt; write
+
+assessment.sufficient == false 且仍有轮次
+  -&gt; research
+
+超过最大轮次或没有 follow-up topic
+  -&gt; human_review</code></pre>
+<p>这就是项目里的迭代式研究闭环。系统不会默认相信第一轮检索结果，而是让 Critic 根据覆盖度和引用完整性决定是否继续查。</p>
+<h2 id="并行-researcher"><a class="anchor" href="#并行-researcher" aria-label="章节链接">#</a>并行 Researcher</h2>
+<p>Planner 会生成 3-5 个 <code>ResearchTopic</code>。Research 节点内部使用 <code>asyncio.gather()</code> 并行执行多个研究主题：</p>
+<pre class="code-block" data-lang="text"><code>topic-1 -&gt; ResearchAgent
+topic-2 -&gt; ResearchAgent
+topic-3 -&gt; ResearchAgent
+...</code></pre>
+<p>并行执行的好处是：</p>
+<ul>
+<li>缩短开放式研究的等待时间。</li>
+<li>每个主题独立产生证据卡片。</li>
+<li>状态合并时只需要按 <code>card_id</code> 去重。</li>
+</ul>
+<p>这里没有为每个 topic 创建不同类型的 Agent，而是复用同一个 <code>ResearchAgent</code> 类，通过 <code>context[&quot;research_topic&quot;]</code> 注入不同研究主题。</p>
+<h2 id="human-in-the-loop"><a class="anchor" href="#human-in-the-loop" aria-label="章节链接">#</a>Human-in-the-loop</h2>
+<p>项目支持人工审核断点。LangGraph 编译时设置：</p>
+<pre class="code-block" data-lang="text"><code>interrupt_before = [&quot;human_review&quot;]</code></pre>
+<p>当 Critic 认为证据不足且轮次耗尽时，任务可以停在人工审核节点。前端或 API 调用 <code>/task/{task_id}/resume</code> 后，系统会把审核结果写回 checkpoint，然后从断点继续执行。</p>
+<p>这个设计适合展示“Agent 不是必须完全自动化”，而是可以在人类需要把关的地方暂停，让人确认证据质量。</p>
+<h2 id="agent-之间如何传递信息"><a class="anchor" href="#agent-之间如何传递信息" aria-label="章节链接">#</a>Agent 之间如何传递信息</h2>
+<p>Agent 之间不直接互相调用，而是通过图状态和 <code>context</code> 间接传递：</p>
+<pre class="code-block" data-lang="text"><code>Planner -&gt; context[&quot;research_topics&quot;]
+Researcher -&gt; context[&quot;evidence_cards&quot;]
+Critic -&gt; context[&quot;critic_assessment&quot;] + pending_topics
+Writer -&gt; 读取 research_topics/evidence_cards/critic_assessment</code></pre>
+<p>这样做有两个好处：</p>
+<ul>
+<li>Agent 之间解耦，单个 Agent 更容易测试。</li>
+<li>所有中间状态都可以被 Orchestrator 记录和恢复。</li>
+</ul>
+</article><article class="doc-section" id="4-状态管理" data-title="4. 状态管理"><div class="source-path">docs/gitbook/04-state-management.md</div>
+<h1 id="4-状态管理-2"><a class="anchor" href="#4-状态管理-2" aria-label="章节链接">#</a>4. 状态管理</h1>
+<p>Agent 系统如果没有状态管理，很快会变成一串不可复盘的 LLM 调用。本项目把任务、步骤、图状态、日志、指标和 checkpoint 分层管理。</p>
+<h2 id="状态层次"><a class="anchor" href="#状态层次" aria-label="章节链接">#</a>状态层次</h2>
+<p>系统里主要有四类状态：</p>
+<ul>
+<li><code>TaskState</code>：一次用户任务的整体状态。</li>
+<li><code>StepState</code>：某个 Agent 步骤的执行状态。</li>
+<li><code>ResearchGraphState</code>：LangGraph 运行中的工作流状态。</li>
+<li><code>MemoryStore</code>：任务事件、长期记忆和滚动摘要。</li>
+</ul>
+<h2 id="taskstate"><a class="anchor" href="#taskstate" aria-label="章节链接">#</a>TaskState</h2>
+<p><code>TaskState</code> 是对外最重要的任务模型，包含：</p>
+<pre class="code-block" data-lang="text"><code>task_id
+trace_id
+request_id
+task
+status
+steps
+result
+error
+metadata
+metrics
+task_graph
+created_at
+updated_at</code></pre>
+<p>它解决的是“一个任务现在运行到哪里了”的问题。</p>
+<h2 id="stepstate"><a class="anchor" href="#stepstate" aria-label="章节链接">#</a>StepState</h2>
+<p>每个 Agent 执行都会创建一个 <code>StepState</code>，包含：</p>
+<pre class="code-block" data-lang="text"><code>step_id
+agent
+input
+output
+status
+llm_provider
+llm_model
+latency
+retries
+error
+tool_calls
+llm_usage
+depends_on</code></pre>
+<p>这让系统可以回答：</p>
+<ul>
+<li>哪个 Agent 失败了？</li>
+<li>调用了什么工具？</li>
+<li>用了哪个模型？</li>
+<li>花了多少 token 和成本？</li>
+<li>是否发生重试？</li>
+</ul>
+<h2 id="researchgraphstate"><a class="anchor" href="#researchgraphstate" aria-label="章节链接">#</a>ResearchGraphState</h2>
+<p>LangGraph 内部状态用于控制研究流程：</p>
+<pre class="code-block" data-lang="text"><code>task_id
+task_state
+task
+context
+topics
+pending_topics
+evidence_cards
+assessment
+round_index
+max_research_rounds
+final_output
+rag_cache_hits
+routing_decisions
+human_approved</code></pre>
+<p>这个状态不是简单的字符串上下文，而是结构化的工作流数据。每个节点只更新自己负责的字段。</p>
+<h2 id="checkpoint"><a class="anchor" href="#checkpoint" aria-label="章节链接">#</a>Checkpoint</h2>
+<p>项目支持 LangGraph Checkpointer。初始化时先使用内存 checkpoint，首次执行时尝试升级为 SQLite checkpoint。</p>
+<p>Checkpoint 的作用是：</p>
+<ul>
+<li>支持 human-in-the-loop 暂停和恢复。</li>
+<li>节点完成后保存中间状态。</li>
+<li>服务重启后仍有机会恢复任务状态。</li>
+</ul>
+<p>对应数据默认写入 <code>data/checkpoints.db</code>，这个文件属于运行产物，不应该上传 GitHub。</p>
+<h2 id="状态更新原则"><a class="anchor" href="#状态更新原则" aria-label="章节链接">#</a>状态更新原则</h2>
+<p>项目里的状态更新遵循几个原则：</p>
+<ul>
+<li>API 只负责创建任务和查询结果，不直接执行长任务。</li>
+<li>Queue 负责把任务交给 Orchestrator，避免阻塞请求。</li>
+<li>Orchestrator 是唯一的编排中心，负责调用 Agent 和更新步骤。</li>
+<li>Agent 只产出 <code>AgentRun</code>，不直接操作数据库。</li>
+<li>TaskManager 负责持久化任务、步骤、日志和指标。</li>
+</ul>
+<p>这种分层让代码边界比较清楚：Agent 专注智能行为，Orchestrator 专注流程，TaskManager 专注持久化。</p>
+</article><article class="doc-section" id="5-工具调用" data-title="5. 工具调用"><div class="source-path">docs/gitbook/05-tool-calling.md</div>
+<h1 id="5-工具调用-2"><a class="anchor" href="#5-工具调用-2" aria-label="章节链接">#</a>5. 工具调用</h1>
+<p>本项目里的工具层是 Agent 和外部世界之间的边界。Researcher 不直接写搜索和抓取逻辑，而是通过工具调用完成搜索、抓取、文档读取等动作。</p>
+<h2 id="工具抽象"><a class="anchor" href="#工具抽象" aria-label="章节链接">#</a>工具抽象</h2>
+<p>工具统一返回 <code>ToolResult</code>：</p>
+<pre class="code-block" data-lang="text"><code>tool
+success
+output
+latency
+metadata</code></pre>
+<p>这个结构使工具调用可以被统一记录到 <code>StepState.tool_calls</code>，前端和导出产物都能看到工具调用历史。</p>
+<h2 id="当前工具"><a class="anchor" href="#当前工具" aria-label="章节链接">#</a>当前工具</h2>
+<div class="table-wrap"><table><thead><tr><th>工具</th><th>作用</th></tr></thead><tbody><tr><td><code>WebSearchTool</code></td><td>搜索网页，返回候选 URL、标题、摘要和分数</td></tr><tr><td><code>WebFetchTool</code></td><td>抓取 URL 正文，抽取段落</td></tr><tr><td><code>DocumentReaderTool</code></td><td>读取本地文档作为研究来源</td></tr><tr><td><code>MarkdownRenderTool</code></td><td>检查 Writer 生成的 Markdown 是否可渲染</td></tr><tr><td><code>PythonExecTool</code></td><td>预留给受控 Python 执行场景</td></tr></tbody></table></div>
+<h2 id="researcher-的工具链"><a class="anchor" href="#researcher-的工具链" aria-label="章节链接">#</a>Researcher 的工具链</h2>
+<p>Researcher 的典型链路是：</p>
+<pre class="code-block" data-lang="text"><code>query
+  -&gt; web_search
+  -&gt; search results
+  -&gt; web_fetch for each URL
+  -&gt; paragraphs
+  -&gt; EvidenceCard</code></pre>
+<p>每个研究主题最多取若干 query，每个 query 最多取若干来源。这样可以通过配置控制搜索广度，避免一次任务抓取过多页面。</p>
+<h2 id="web-search"><a class="anchor" href="#web-search" aria-label="章节链接">#</a>Web Search</h2>
+<p>搜索工具支持多种 provider：</p>
+<ul>
+<li>Tavily：适合真实搜索 API。</li>
+<li>SearXNG：适合自托管搜索。</li>
+<li>Playwright：适合浏览器兜底搜索。</li>
+<li>DuckDuckGo：作为轻量兜底。</li>
+</ul>
+<p>推荐展示时强调 <code>auto</code> 模式：系统优先使用稳定来源，失败时逐级 fallback。</p>
+<h2 id="web-fetch"><a class="anchor" href="#web-fetch" aria-label="章节链接">#</a>Web Fetch</h2>
+<p>抓取工具优先使用 Crawl4AI 做正文抽取和 Markdown 清洗；如果不可用，则退回到轻量 HTML 解析。</p>
+<p>抓取结果会被切成段落，每段带有：</p>
+<pre class="code-block" data-lang="text"><code>paragraph_id
+text</code></pre>
+<p>这个段落 ID 对证据追踪非常关键，因为最终报告中的引用不是只指向网页，而是指向网页中的具体段落。</p>
+<h2 id="工具失败处理"><a class="anchor" href="#工具失败处理" aria-label="章节链接">#</a>工具失败处理</h2>
+<p>工具失败不会总是直接让整个任务失败。比如单个网页抓取失败时，Researcher 会退回使用搜索结果里的摘要信息，继续处理其他来源。</p>
+<p>但如果 <code>AgentRun.tool_calls</code> 中存在失败工具，Orchestrator 会在步骤层面识别并触发重试逻辑。这样可以兼顾鲁棒性和可观测性。</p>
+<h2 id="与-mcp-的关系"><a class="anchor" href="#与-mcp-的关系" aria-label="章节链接">#</a>与 MCP 的关系</h2>
+<p>项目里的工具风格接近 MCP 工具的工程抽象：每个工具有明确输入、输出、成功状态和元数据。虽然当前实现是本地 Python 工具类，但迁移到 MCP Server 时，边界是清楚的：</p>
+<ul>
+<li><code>BaseTool</code> 对应工具协议层。</li>
+<li><code>ToolResult</code> 对应工具调用返回。</li>
+<li>Agent 只依赖工具名和结构化输出，不依赖具体实现。</li>
+</ul>
+</article><article class="doc-section" id="6-rag-知识系统" data-title="6. RAG 知识系统"><div class="source-path">docs/gitbook/06-rag-system.md</div>
+<h1 id="6-rag-知识系统-2"><a class="anchor" href="#6-rag-知识系统-2" aria-label="章节链接">#</a>6. RAG 知识系统</h1>
+<p>这一轮之后，项目里的 RAG 不再只是“历史 EvidenceCard 缓存”。它被拆成两类知识来源：</p>
+<ul>
+<li>外部知识库资料：通过 API 主动写入的业务资料、研究材料、用户上传文本或内部文档。</li>
+<li>研究证据沉淀：任务完成后自动写入的 EvidenceCard，用于后续相似研究复用。</li>
+</ul>
+<p>这更接近实际 RAG 知识系统：先有可维护的知识库，再让 Agent 在 Research 前检索知识库；如果知识库不足，再走 Web Search。</p>
+<h2 id="系统定位"><a class="anchor" href="#系统定位" aria-label="章节链接">#</a>系统定位</h2>
+<p>RAG 在本项目中的定位是“Agent 的知识层”，不是项目 Markdown 文档问答。它解决三个问题：</p>
+<ul>
+<li>让用户或系统可以主动写入外部知识资料。</li>
+<li>让 Researcher 在联网搜索前优先检索知识库。</li>
+<li>让已经完成的研究证据继续沉淀，形成可复用知识资产。</li>
+</ul>
+<p>主链路仍然是：</p>
+<pre class="code-block" data-lang="text"><code>Planner -&gt; Researcher -&gt; Critic -&gt; Writer</code></pre>
+<p>RAG 插在 Research 前后：</p>
+<pre class="code-block" data-lang="text"><code>Research 前：检索知识库和历史证据
+Research 后：未命中时继续 Web Search
+Write 后：把新 EvidenceCard 自动沉淀入库</code></pre>
+<h2 id="外部知识入库"><a class="anchor" href="#外部知识入库" aria-label="章节链接">#</a>外部知识入库</h2>
+<p>外部知识通过 API 写入：</p>
+<pre class="code-block" data-lang="text"><code>POST /rag/knowledge</code></pre>
+<p>请求体：</p>
+<pre class="code-block" data-lang="json"><code>{
+  &quot;source_id&quot;: &quot;internal-agent-notes-001&quot;,
+  &quot;title&quot;: &quot;内部 Agent 设计资料&quot;,
+  &quot;text&quot;: &quot;这里放入业务资料、研究材料、用户上传文本或内部知识内容。&quot;,
+  &quot;source_url&quot;: &quot;https://example.test/internal-agent-notes&quot;,
+  &quot;source_type&quot;: &quot;internal_doc&quot;,
+  &quot;metadata&quot;: {
+    &quot;department&quot;: &quot;research&quot;,
+    &quot;version&quot;: &quot;2026-04&quot;
+  }
+}</code></pre>
+<p>入库流程：</p>
+<pre class="code-block" data-lang="text"><code>KnowledgeIngestRequest
+  -&gt; SemanticChunker
+  -&gt; Embedder
+  -&gt; VectorDocument
+  -&gt; ChromaDB</code></pre>
+<p>向量文档 ID：</p>
+<pre class="code-block" data-lang="text"><code>knowledge:{source_id}:{chunk_idx}</code></pre>
+<h2 id="知识检索"><a class="anchor" href="#知识检索" aria-label="章节链接">#</a>知识检索</h2>
+<p>只检索主动写入的知识库资料：</p>
+<pre class="code-block" data-lang="text"><code>GET /rag/knowledge/search?q=&lt;query&gt;&amp;top_k=5</code></pre>
+<p>这个接口会使用向量库过滤条件：</p>
+<pre class="code-block" data-lang="text"><code>record_type = knowledge</code></pre>
+<p>因此它不会混入任务自动沉淀的 EvidenceCard，适合验证“真实知识库”是否已经写入并可检索。</p>
+<h2 id="知识删除"><a class="anchor" href="#知识删除" aria-label="章节链接">#</a>知识删除</h2>
+<p>删除某个知识源：</p>
+<pre class="code-block" data-lang="text"><code>DELETE /rag/knowledge/{source_id}</code></pre>
+<p>这会删除该 source_id 下的所有 chunk。</p>
+<h2 id="研究证据沉淀"><a class="anchor" href="#研究证据沉淀" aria-label="章节链接">#</a>研究证据沉淀</h2>
+<p>任务完成后，系统仍会把 EvidenceCard 自动写入向量库：</p>
+<pre class="code-block" data-lang="text"><code>EvidenceCard
+  -&gt; claim + summary
+  -&gt; SemanticChunker
+  -&gt; Embedder
+  -&gt; VectorDocument
+  -&gt; ChromaDB</code></pre>
+<p>这类数据的 <code>record_type</code> 是：</p>
+<pre class="code-block" data-lang="text"><code>research_evidence</code></pre>
+<p>它和外部知识库资料共用底层向量库，但元数据不同。</p>
+<h2 id="research-前如何使用-rag"><a class="anchor" href="#research-前如何使用-rag" aria-label="章节链接">#</a>Research 前如何使用 RAG</h2>
+<p>Research 节点开始时会执行：</p>
+<pre class="code-block" data-lang="text"><code>pending_topics
+  -&gt; check_cache(topic.question)
+  -&gt; 命中足够知识/证据：转成 EvidenceCard
+  -&gt; 命中不足：进入 Web Search</code></pre>
+<p>这意味着 Agent 会优先利用已有知识系统，而不是每次都重新联网搜索。</p>
+<h2 id="元数据设计"><a class="anchor" href="#元数据设计" aria-label="章节链接">#</a>元数据设计</h2>
+<p>外部知识资料保留：</p>
+<pre class="code-block" data-lang="text"><code>record_type = knowledge
+source_id
+title
+source_url
+source_type
+chunk_idx
+token_count
+自定义 metadata</code></pre>
+<p>研究证据沉淀保留：</p>
+<pre class="code-block" data-lang="text"><code>record_type = research_evidence
+task_id
+card_id
+topic_id
+source_url
+confidence
+source_type
+chunk_idx
+token_count</code></pre>
+<h2 id="展示口径"><a class="anchor" href="#展示口径" aria-label="章节链接">#</a>展示口径</h2>
+<p>推荐这样描述：</p>
+<blockquote>项目实现了一个真实的 RAG 知识层：用户可以通过 API 写入外部知识资料，系统会进行语义分块、embedding 和 ChromaDB 持久化；Research 阶段会优先查询知识库和历史证据，命中后转成 EvidenceCard 参与 Critic 和 Writer 流程，未命中再走 Web Search。这样 RAG 不只是项目文档问答，而是 Agent 工作流中的知识基础设施。</blockquote>
+</article><article class="doc-section" id="7-记忆系统与上下文血统" data-title="7. 记忆系统与上下文血统"><div class="source-path">docs/gitbook/07-memory-and-context-lineage.md</div>
+<h1 id="7-记忆系统与上下文血统-2"><a class="anchor" href="#7-记忆系统与上下文血统-2" aria-label="章节链接">#</a>7. 记忆系统与上下文血统</h1>
+<p>这里的“记忆”不是单一数据库表，而是几类不同用途的状态沉淀。项目把短期事件、长期 KV、滚动摘要、上下文压缩和证据窗口分开处理。</p>
+<h2 id="为什么要分层记忆"><a class="anchor" href="#为什么要分层记忆" aria-label="章节链接">#</a>为什么要分层记忆</h2>
+<p>Agent 系统里的记忆至少有四种需求：</p>
+<ul>
+<li>运行时事件：某个任务发生了什么。</li>
+<li>长期总结：任务完成后留下什么结论。</li>
+<li>上下文压缩：Prompt 太长时如何保留关键信息。</li>
+<li>证据血统：最终结论来自哪些来源和段落。</li>
+</ul>
+<p>如果把这些都混在一个“memory”字段里，后续调试和展示会很困难。所以项目采用分层设计。</p>
+<h2 id="memorystore"><a class="anchor" href="#memorystore" aria-label="章节链接">#</a>MemoryStore</h2>
+<p><code>MemoryStore</code> 提供两类存储：</p>
+<pre class="code-block" data-lang="text"><code>_events: dict[task_id, list[event]]
+_kv: dict[key, value]</code></pre>
+<p><code>_events</code> 用于保存任务内事件，例如：</p>
+<pre class="code-block" data-lang="text"><code>agent_step_success
+evidence_card_created
+critic_assessment_completed
+task_failed
+rag_ingestion_completed</code></pre>
+<p><code>_kv</code> 用于保存长期信息，例如：</p>
+<pre class="code-block" data-lang="text"><code>task:{task_id}:summary
+rolling_summary:{task_id}
+compression_stats:{task_id}</code></pre>
+<p>长期 KV 会写入 <code>data/long_term_memory.json</code>。这个文件是运行产物，不应该提交到 GitHub。</p>
+<h2 id="滚动摘要"><a class="anchor" href="#滚动摘要" aria-label="章节链接">#</a>滚动摘要</h2>
+<p>每个 Agent 步骤完成后，Orchestrator 会异步调用 <code>IncrementalSummarizer</code>：</p>
+<pre class="code-block" data-lang="text"><code>AgentRun
+  -&gt; summarize_agent_run
+  -&gt; rolling_update
+  -&gt; MemoryStore.set_rolling_summary</code></pre>
+<p>滚动摘要的目标是保留任务过程中的关键发现，而不是把每个工具返回的长文本都塞进后续 Prompt。</p>
+<h2 id="上下文压缩"><a class="anchor" href="#上下文压缩" aria-label="章节链接">#</a>上下文压缩</h2>
+<p><code>ContextWindowManager</code> 用于控制上下文长度。它有两种压缩方式：</p>
+<ul>
+<li><code>fit_context()</code>：单段上下文超预算时压缩成摘要。</li>
+<li><code>fit_messages()</code>：多轮消息超预算时保留最新消息，把溢出的旧消息压缩成 system 摘要。</li>
+</ul>
+<p>核心思想是：新信息优先保留，旧信息压缩保留。</p>
+<h2 id="证据窗口"><a class="anchor" href="#证据窗口" aria-label="章节链接">#</a>证据窗口</h2>
+<p>Orchestrator 里还有一个 <code>evidence_window</code>：</p>
+<pre class="code-block" data-lang="text"><code>context[&quot;evidence_window&quot;] = last N evidence cards</code></pre>
+<p>这不是长期记忆，而是给当前 Agent 使用的滑动证据窗口。它避免把所有历史证据都塞给模型，同时保留最近最相关的证据。</p>
+<h2 id="记忆血统"><a class="anchor" href="#记忆血统" aria-label="章节链接">#</a>记忆血统</h2>
+<p>本项目里的“血统”可以理解为每条结论的来源链：</p>
+<pre class="code-block" data-lang="text"><code>最终报告段落
+  -&gt; 引用编号
+  -&gt; EvidenceCard
+  -&gt; Citation
+  -&gt; URL + title + paragraph_id + snippet
+  -&gt; ResearchTopic
+  -&gt; Planner 拆解的问题</code></pre>
+<p>这条链路让系统可以说明：报告里的结论不是凭空生成，而是来自某个研究主题下的某张证据卡，证据卡又来自某个网页的具体段落。</p>
+<h2 id="记忆与-rag-的区别"><a class="anchor" href="#记忆与-rag-的区别" aria-label="章节链接">#</a>记忆与 RAG 的区别</h2>
+<div class="table-wrap"><table><thead><tr><th>模块</th><th>作用</th><th>数据形态</th></tr></thead><tbody><tr><td>MemoryStore events</td><td>记录任务过程</td><td>事件列表</td></tr><tr><td>MemoryStore KV</td><td>保存长期摘要和统计</td><td>JSON KV</td></tr><tr><td>Rolling Summary</td><td>压缩过程信息</td><td>文本摘要</td></tr><tr><td>Evidence Window</td><td>控制当前 Prompt 证据上下文</td><td>最近 N 张证据卡</td></tr><tr><td>RAG Vector Store</td><td>复用历史证据</td><td>向量文档</td></tr></tbody></table></div>
+<p>这几类模块共同构成项目的上下文管理体系。</p>
+</article><article class="doc-section" id="8-模型路由" data-title="8. 模型路由"><div class="source-path">docs/gitbook/08-model-routing.md</div>
+<h1 id="8-模型路由-2"><a class="anchor" href="#8-模型路由-2" aria-label="章节链接">#</a>8. 模型路由</h1>
+<p>项目没有把所有 Agent 都固定到同一个模型，而是使用 <code>LLMRouter</code> 根据任务复杂度、Agent 类型、Token 数、Provider 配置和失败情况选择模型。</p>
+<h2 id="路由目标"><a class="anchor" href="#路由目标" aria-label="章节链接">#</a>路由目标</h2>
+<p>模型路由解决三个问题：</p>
+<ul>
+<li>成本控制：简单任务和摘要任务不必使用大模型。</li>
+<li>能力匹配：Planner、Critic 等关键判断环节可以使用更强模型。</li>
+<li>可用性：Provider 失败时自动 fallback 到其他 Provider 或 local mock。</li>
+</ul>
+<h2 id="provider-列表"><a class="anchor" href="#provider-列表" aria-label="章节链接">#</a>Provider 列表</h2>
+<p>系统支持以下 Provider：</p>
+<pre class="code-block" data-lang="text"><code>local
+openai
+openai_nano
+openai_mini
+anthropic
+openrouter
+qwen</code></pre>
+<p>没有 API key 或远程服务不可用时，Provider 会退回 local mock，保证项目可以本地演示。</p>
+<h2 id="llmcontext"><a class="anchor" href="#llmcontext" aria-label="章节链接">#</a>LLMContext</h2>
+<p>每次模型调用都会构造 <code>LLMContext</code>：</p>
+<pre class="code-block" data-lang="text"><code>task
+agent
+complexity
+excluded_providers
+metadata</code></pre>
+<p>这让路由器知道当前是谁在调用模型、任务复杂度如何、Prompt 大概多长、哪些 Provider 已经失败或被黑名单排除。</p>
+<h2 id="选择规则"><a class="anchor" href="#选择规则" aria-label="章节链接">#</a>选择规则</h2>
+<p>优先级大致如下：</p>
+<ol>
+<li>如果配置了 <code>agent_provider_overrides</code>，优先使用该 Agent 的指定 Provider。</li>
+<li>如果 Prompt token 超过复杂任务阈值，使用复杂任务 Provider。</li>
+<li>如果任务复杂度是 <code>complex</code>，使用复杂任务 Provider。</li>
+<li>如果 Agent 是 Planner 或 Critic 且不是简单任务，使用复杂任务 Provider。</li>
+<li>否则使用简单任务 Provider。</li>
+</ol>
+<p>之后再加上 fallback providers、默认 Provider 和 local 兜底。</p>
+<h2 id="routingdecision"><a class="anchor" href="#routingdecision" aria-label="章节链接">#</a>RoutingDecision</h2>
+<p>每次 LLM 调用都会生成 <code>RoutingDecision</code>：</p>
+<pre class="code-block" data-lang="text"><code>agent
+provider
+model
+tier
+complexity_score
+signals
+reason
+estimated_cost_usd
+fallback_used</code></pre>
+<p>这些信息可以用于前端展示，也可以用于复盘模型选择是否合理。</p>
+<h2 id="失败与降级"><a class="anchor" href="#失败与降级" aria-label="章节链接">#</a>失败与降级</h2>
+<p>如果某个 Provider 调用失败，系统会：</p>
+<ol>
+<li>记录失败次数。</li>
+<li>把该 Provider 加入当前调用的排除集合。</li>
+<li>尝试下一个候选 Provider。</li>
+<li>所有候选都失败时，使用 local。</li>
+</ol>
+<p>这使得模型调用不是单点故障。即使 OpenAI、OpenRouter 或本地 vLLM 不可用，系统仍可以跑通流程，适合作为练手项目和演示项目。</p>
+<h2 id="适合展示的说法"><a class="anchor" href="#适合展示的说法" aria-label="章节链接">#</a>适合展示的说法</h2>
+<blockquote>我在项目里做了一个轻量模型路由器。每个 Agent 调用模型时都会携带 LLMContext，路由器根据 Agent 角色、任务复杂度、Prompt token、Provider 黑名单和历史成功率选择 Provider。调用结果会记录 token、延迟、成本和 fallback 状态，最后统一写入 StepState 和 routing log。</blockquote>
+</article><article class="doc-section" id="9-证据追踪" data-title="9. 证据追踪"><div class="source-path">docs/gitbook/09-evidence-tracing.md</div>
+<h1 id="9-证据追踪-2"><a class="anchor" href="#9-证据追踪-2" aria-label="章节链接">#</a>9. 证据追踪</h1>
+<p>证据追踪是这个项目最重要的展示点之一。系统不是只生成一篇看起来合理的报告，而是要求报告结论能回到具体证据卡片、具体 URL 和具体段落。</p>
+<h2 id="evidencecard"><a class="anchor" href="#evidencecard" aria-label="章节链接">#</a>EvidenceCard</h2>
+<p>证据卡片的数据结构如下：</p>
+<pre class="code-block" data-lang="text"><code>card_id
+topic_id
+claim
+summary
+citation
+confidence
+source_type
+created_at</code></pre>
+<p>其中 <code>citation</code> 包含：</p>
+<pre class="code-block" data-lang="text"><code>url
+title
+paragraph_id
+snippet</code></pre>
+<p>这意味着一条证据不仅知道来自哪个网页，还知道来自页面中的哪一段。</p>
+<h2 id="证据生成流程"><a class="anchor" href="#证据生成流程" aria-label="章节链接">#</a>证据生成流程</h2>
+<p>Researcher 生成证据卡片的流程：</p>
+<pre class="code-block" data-lang="text"><code>ResearchTopic
+  -&gt; search_queries
+  -&gt; WebSearchTool
+  -&gt; candidate URLs
+  -&gt; WebFetchTool
+  -&gt; paragraphs
+  -&gt; preliminary cards
+  -&gt; LLM refinement
+  -&gt; EvidenceCard</code></pre>
+<p>如果 LLM 能成功输出结构化 JSON，则使用 LLM 生成的 claim 和 summary；如果失败，则使用规则兜底摘要。</p>
+<h2 id="card_id"><a class="anchor" href="#card_id" aria-label="章节链接">#</a>card_id</h2>
+<p><code>card_id</code> 使用主题、URL 和段落 ID 生成哈希：</p>
+<pre class="code-block" data-lang="text"><code>sha1(topic_id:url:paragraph_id)</code></pre>
+<p>这个设计用于去重。即使同一个来源在多轮检索中被重复抓取，也不会重复加入证据集。</p>
+<h2 id="critic-如何评估证据"><a class="anchor" href="#critic-如何评估证据" aria-label="章节链接">#</a>Critic 如何评估证据</h2>
+<p>Critic 会检查：</p>
+<ul>
+<li>每个研究主题是否有足够证据卡片。</li>
+<li>每张证据是否有 URL。</li>
+<li>每张证据是否有 paragraph_id。</li>
+<li>不同来源数量是否足够支撑忠实度。</li>
+</ul>
+<p>然后输出：</p>
+<pre class="code-block" data-lang="text"><code>sufficient
+coverage_score
+faithfulness_score
+answer_relevancy_score
+missing_topics
+follow_up_topics
+notes</code></pre>
+<p>如果某个主题证据不足，Critic 会生成 follow-up topic，让系统下一轮继续检索。</p>
+<h2 id="writer-如何使用证据"><a class="anchor" href="#writer-如何使用证据" aria-label="章节链接">#</a>Writer 如何使用证据</h2>
+<p>Writer 不是直接根据原始搜索结果写报告，而是基于 EvidenceCard 生成报告：</p>
+<pre class="code-block" data-lang="text"><code>EvidenceCard -&gt; citation number -&gt; paragraph with citation marker</code></pre>
+<p>报告末尾会生成引用索引：</p>
+<pre class="code-block" data-lang="text"><code>1. [title#paragraph_id](url)
+2. [title#paragraph_id](url)</code></pre>
+<p>这使报告中的引用和证据卡片可以对应起来。</p>
+<h2 id="证据血统链"><a class="anchor" href="#证据血统链" aria-label="章节链接">#</a>证据血统链</h2>
+<p>一条报告结论的完整追踪路径：</p>
+<pre class="code-block" data-lang="text"><code>Markdown 报告中的结论
+  -&gt; 引用编号 [n]
+  -&gt; 引用索引第 n 项
+  -&gt; Citation(url, title, paragraph_id)
+  -&gt; EvidenceCard(card_id, topic_id, claim, summary)
+  -&gt; ResearchTopic(topic_id, question, rationale)
+  -&gt; Planner 生成的任务图</code></pre>
+<p>这条链路就是项目“可信研究”的核心。</p>
+<h2 id="导出产物"><a class="anchor" href="#导出产物" aria-label="章节链接">#</a>导出产物</h2>
+<p>调用 <code>POST /task/{task_id}/artifacts</code> 后，系统会导出：</p>
+<pre class="code-block" data-lang="text"><code>report.md
+evidence_cards.json
+citations.json
+trace.json
+metrics.json
+run_manifest.json</code></pre>
+<p>这些文件适合放在演示材料里，但真实运行生成的 <code>artifacts/</code> 目录不建议提交到 GitHub 主仓库，避免仓库变大和混入临时数据。</p>
+</article><article class="doc-section" id="10-可观测性与产物" data-title="10. 可观测性与产物"><div class="source-path">docs/gitbook/10-observability-and-artifacts.md</div>
+<h1 id="10-可观测性与产物-2"><a class="anchor" href="#10-可观测性与产物-2" aria-label="章节链接">#</a>10. 可观测性与产物</h1>
+<p>Agent 系统要能展示和调试，必须记录每一步发生了什么。本项目从任务状态、步骤状态、日志、指标、模型路由、工具调用和导出产物几个层面做可观测性。</p>
+<h2 id="日志"><a class="anchor" href="#日志" aria-label="章节链接">#</a>日志</h2>
+<p>系统使用结构化日志记录关键事件，例如：</p>
+<pre class="code-block" data-lang="text"><code>langgraph_node_completed
+research_round_completed
+critic_assessment_completed
+human_review_filtered
+human_review_approved
+rag_ingestion_completed
+task_failed</code></pre>
+<p>每条日志带有：</p>
+<pre class="code-block" data-lang="text"><code>task_id
+trace_id
+request_id
+level
+event
+message
+payload
+created_at</code></pre>
+<p>这些信息可以通过 <code>/logs</code> API 查询。</p>
+<h2 id="metrics"><a class="anchor" href="#metrics" aria-label="章节链接">#</a>Metrics</h2>
+<p>任务指标聚合在 <code>TaskMetrics</code>：</p>
+<pre class="code-block" data-lang="text"><code>total_steps
+successful_steps
+failed_steps
+retries
+latency
+success_rate
+llm_calls
+total_tokens
+estimated_cost
+avg_latency
+provider_usage</code></pre>
+<p>这让项目可以回答：</p>
+<ul>
+<li>本次任务用了几个 Agent 步骤？</li>
+<li>总共调用了几次 LLM？</li>
+<li>估算花费是多少？</li>
+<li>哪些 Provider 被使用最多？</li>
+<li>平均延迟是多少？</li>
+</ul>
+<h2 id="工具调用记录"><a class="anchor" href="#工具调用记录" aria-label="章节链接">#</a>工具调用记录</h2>
+<p>每个 Step 都会保存 <code>tool_calls</code>。Researcher 的步骤里通常可以看到：</p>
+<pre class="code-block" data-lang="text"><code>web_search
+web_fetch
+web_fetch
+...</code></pre>
+<p>这对调试很重要，因为研究结果差时可以判断是搜索源问题、抓取问题、页面清洗问题，还是 LLM 抽取问题。</p>
+<h2 id="模型路由日志"><a class="anchor" href="#模型路由日志" aria-label="章节链接">#</a>模型路由日志</h2>
+<p><code>RoutingDecision</code> 记录每次模型选择：</p>
+<pre class="code-block" data-lang="text"><code>agent
+provider
+model
+tier
+complexity_score
+reason
+estimated_cost_usd
+fallback_used</code></pre>
+<p>对应 API 是：</p>
+<pre class="code-block" data-lang="text"><code>GET /task/{task_id}/routing_log</code></pre>
+<p>这适合展示“不是所有地方都盲目用大模型”，而是按角色和复杂度选择。</p>
+<h2 id="上下文统计"><a class="anchor" href="#上下文统计" aria-label="章节链接">#</a>上下文统计</h2>
+<p>上下文统计 API：</p>
+<pre class="code-block" data-lang="text"><code>GET /task/{task_id}/context_stats</code></pre>
+<p>返回：</p>
+<pre class="code-block" data-lang="text"><code>rolling_summary
+compression_count
+tokens_saved</code></pre>
+<p>它用于展示长任务里如何管理上下文窗口。</p>
+<h2 id="产物导出"><a class="anchor" href="#产物导出" aria-label="章节链接">#</a>产物导出</h2>
+<p>导出接口：</p>
+<pre class="code-block" data-lang="text"><code>POST /task/{task_id}/artifacts</code></pre>
+<p>导出内容包括：</p>
+<ul>
+<li><code>report.md</code>：最终报告。</li>
+<li><code>evidence_cards.json</code>：证据卡片。</li>
+<li><code>citations.json</code>：引用索引。</li>
+<li><code>trace.json</code>：执行轨迹。</li>
+<li><code>metrics.json</code>：指标。</li>
+<li><code>run_manifest.json</code>：运行清单。</li>
+</ul>
+<p>这些产物可以用于演示，但建议只保留精选样例，不要把大量运行结果提交到仓库。</p>
+</article><article class="doc-section" id="11-api-前端与演示" data-title="11. API、前端与演示"><div class="source-path">docs/gitbook/11-api-frontend-demo.md</div>
+<h1 id="11-api-前端与演示-2"><a class="anchor" href="#11-api-前端与演示-2" aria-label="章节链接">#</a>11. API、前端与演示</h1>
+<p>项目提供 FastAPI 接口和轻量中文前端。前端主要用于演示任务提交、任务列表、执行时间线、证据卡片、Critic 评分、报告结果和平台指标。</p>
+<h2 id="api-入口"><a class="anchor" href="#api-入口" aria-label="章节链接">#</a>API 入口</h2>
+<p>核心接口如下：</p>
+<div class="table-wrap"><table><thead><tr><th>接口</th><th>作用</th></tr></thead><tbody><tr><td><code>POST /run_task</code></td><td>提交研究任务</td></tr><tr><td><code>GET /task/{task_id}</code></td><td>查询任务状态和结果</td></tr><tr><td><code>DELETE /task/{task_id}</code></td><td>删除任务</td></tr><tr><td><code>GET /task/{task_id}/evidence</code></td><td>查询证据卡片和 Critic 评估</td></tr><tr><td><code>POST /task/{task_id}/artifacts</code></td><td>导出任务产物</td></tr><tr><td><code>GET /tasks</code></td><td>分页查询任务</td></tr><tr><td><code>GET /metrics</code></td><td>查询平台指标</td></tr><tr><td><code>GET /logs</code></td><td>查询日志</td></tr><tr><td><code>GET /task/{task_id}/routing_log</code></td><td>查询模型路由记录</td></tr><tr><td><code>GET /task/{task_id}/context_stats</code></td><td>查询上下文统计</td></tr><tr><td><code>POST /task/{task_id}/resume</code></td><td>Human-in-the-loop 恢复</td></tr><tr><td><code>GET /rag/stats</code></td><td>查询 RAG 知识库统计</td></tr><tr><td><code>POST /rag/knowledge</code></td><td>写入外部知识资料</td></tr><tr><td><code>GET /rag/knowledge/search</code></td><td>只检索主动写入的知识库资料</td></tr><tr><td><code>DELETE /rag/knowledge/{source_id}</code></td><td>删除某个知识源</td></tr><tr><td><code>GET /rag/search</code></td><td>手动查询 RAG</td></tr></tbody></table></div>
+<h2 id="前端工作台"><a class="anchor" href="#前端工作台" aria-label="章节链接">#</a>前端工作台</h2>
+<p>前端位于 <code>frontend/</code>，由 FastAPI 静态挂载：</p>
+<pre class="code-block" data-lang="text"><code>app.mount(&quot;/&quot;, StaticFiles(directory=&quot;frontend&quot;, html=True), name=&quot;frontend&quot;)</code></pre>
+<p>主要能力：</p>
+<ul>
+<li>输入中文研究任务。</li>
+<li>查看任务列表和状态。</li>
+<li>查看任务详情。</li>
+<li>展示 Agent 时间线。</li>
+<li>展示证据卡片。</li>
+<li>展示 Critic 评估。</li>
+<li>导出证据 JSON 或 Markdown。</li>
+<li>查看平台指标。</li>
+</ul>
+<h2 id="本地运行"><a class="anchor" href="#本地运行" aria-label="章节链接">#</a>本地运行</h2>
+<pre class="code-block" data-lang="bash"><code>cd multi-agent-task-platform
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+uvicorn app.main:app --reload</code></pre>
+<p>打开：</p>
+<pre class="code-block" data-lang="text"><code>http://127.0.0.1:8000</code></pre>
+<h2 id="演示任务建议"><a class="anchor" href="#演示任务建议" aria-label="章节链接">#</a>演示任务建议</h2>
+<p>适合展示的任务应该是开放式、有多个角度、需要证据支撑的问题，例如：</p>
+<pre class="code-block" data-lang="text"><code>研究迭代式多智能体系统如何缓解复杂 RAG 流程中的证据覆盖盲点</code></pre>
+<p>这类任务能触发 Planner 拆解、Researcher 并行检索、Critic 检查和 Writer 写报告，展示效果比简单问答更好。</p>
+<h2 id="演示顺序"><a class="anchor" href="#演示顺序" aria-label="章节链接">#</a>演示顺序</h2>
+<p>推荐演示顺序：</p>
+<ol>
+<li>打开前端，提交研究任务。</li>
+<li>观察任务列表变为 running。</li>
+<li>展示 Agent 时间线。</li>
+<li>展示证据卡片和来源链接。</li>
+<li>展示 Critic 评分。</li>
+<li>展示最终报告。</li>
+<li>调用 artifacts 导出产物。</li>
+<li>打开 routing log，解释模型路由。</li>
+<li>打开 context stats，解释滚动摘要和上下文管理。</li>
+</ol>
+<h2 id="注意事项"><a class="anchor" href="#注意事项" aria-label="章节链接">#</a>注意事项</h2>
+<p>如果没有配置真实 API key，系统会退回 local mock，可以跑通流程，但报告质量和搜索效果会受限。用于 GitHub 展示时，这反而是优点：别人 clone 后不配置 key 也能看到系统架构和基本流程。</p>
+</article><article class="doc-section" id="12-github-展示与提交建议" data-title="12. GitHub 展示与提交建议"><div class="source-path">docs/gitbook/12-github-showcase.md</div>
+<h1 id="12-github-展示与提交建议-2"><a class="anchor" href="#12-github-展示与提交建议-2" aria-label="章节链接">#</a>12. GitHub 展示与提交建议</h1>
+<p>当前项目适合上传 GitHub，但建议以“练手型 Agent 工程项目”的口径展示。它的展示价值不在于 UI 多复杂，也不在于声称已经生产可用，而在于覆盖了 Agent 工程常见关键点：多 Agent 编排、工具调用、RAG、状态管理、模型路由、证据追踪、日志指标和产物导出。</p>
+<h2 id="上传前应保留的内容"><a class="anchor" href="#上传前应保留的内容" aria-label="章节链接">#</a>上传前应保留的内容</h2>
+<p>建议提交：</p>
+<ul>
+<li><code>app/</code></li>
+<li><code>frontend/</code></li>
+<li><code>config/</code></li>
+<li><code>demo/</code></li>
+<li><code>docs/</code></li>
+<li><code>evals/questions.json</code></li>
+<li><code>scripts/</code></li>
+<li><code>tests/</code></li>
+<li><code>requirements.txt</code></li>
+<li><code>Dockerfile</code></li>
+<li><code>docker-compose.yml</code></li>
+<li><code>README.md</code></li>
+<li><code>.env.example</code></li>
+<li><code>.gitignore</code></li>
+<li><code>LICENSE</code></li>
+</ul>
+<h2 id="上传前应排除的内容"><a class="anchor" href="#上传前应排除的内容" aria-label="章节链接">#</a>上传前应排除的内容</h2>
+<p>不要提交：</p>
+<ul>
+<li><code>.env</code></li>
+<li><code>.venv/</code></li>
+<li><code>data/</code></li>
+<li><code>logs/</code></li>
+<li><code>artifacts/</code></li>
+<li><code>evals/results/</code></li>
+<li><code>__pycache__/</code></li>
+<li><code>.pytest_cache/</code></li>
+<li>本地数据库、checkpoint、日志和真实运行产物</li>
+</ul>
+<p>当前 <code>.gitignore</code> 已经覆盖这些目录，上传前仍建议执行一次检查。</p>
+<h2 id="推荐仓库展示结构"><a class="anchor" href="#推荐仓库展示结构" aria-label="章节链接">#</a>推荐仓库展示结构</h2>
+<p>GitHub README 建议保留短而清晰的项目介绍，详细设计放到 GitBook：</p>
+<pre class="code-block" data-lang="text"><code>README.md
+docs/
+  gitbook/
+    README.md
+    SUMMARY.md
+    01-system-overview.md
+    ...</code></pre>
+<p>README 里只需要说明：</p>
+<ul>
+<li>项目是什么。</li>
+<li>核心能力是什么。</li>
+<li>如何运行。</li>
+<li>文档入口在哪里。</li>
+<li>演示截图或 GIF 在哪里。</li>
+</ul>
+<h2 id="初始化-git-仓库"><a class="anchor" href="#初始化-git-仓库" aria-label="章节链接">#</a>初始化 Git 仓库</h2>
+<p>当前目录如果还不是 Git 仓库，可以执行：</p>
+<pre class="code-block" data-lang="bash"><code>cd /Users/auntlee/Desktop/简历项目/multi-agent-task-platform
+git init
+git add .
+git status
+git commit -m &quot;docs: add gitbook architecture guide&quot;</code></pre>
+<p>如果已经有 GitHub 空仓库，例如：</p>
+<pre class="code-block" data-lang="text"><code>https://github.com/&lt;your-name&gt;/multi-agent-task-platform.git</code></pre>
+<p>可以添加远程并推送：</p>
+<pre class="code-block" data-lang="bash"><code>git branch -M main
+git remote add origin https://github.com/&lt;your-name&gt;/multi-agent-task-platform.git
+git push -u origin main</code></pre>
+<h2 id="提交前检查"><a class="anchor" href="#提交前检查" aria-label="章节链接">#</a>提交前检查</h2>
+<p>建议执行：</p>
+<pre class="code-block" data-lang="bash"><code>git status --short
+git check-ignore -v .env data/platform.db logs/platform.log
+.venv/bin/python -m pytest -q</code></pre>
+<p>如果没有安装依赖或没有虚拟环境，可以至少执行：</p>
+<pre class="code-block" data-lang="bash"><code>python -m compileall app</code></pre>
+<h2 id="展示时怎么讲"><a class="anchor" href="#展示时怎么讲" aria-label="章节链接">#</a>展示时怎么讲</h2>
+<p>可以用下面这段作为项目介绍：</p>
+<blockquote>这是一个用于练习 Agent 工程能力的迭代式深度研究平台。项目本身不追求包装成成熟商业产品，而是把 Planner、Researcher、Critic、Writer 四类 Agent 串成一条完整研究链路。Planner 负责拆解研究主题，Researcher 并行调用搜索和抓取工具生成段落级证据卡片，Critic 判断证据覆盖是否充分，不足时触发追加检索，Writer 最后基于证据卡片生成带引用的中文 Markdown 报告。围绕这条主链路，项目还练习了模型路由、RAG 证据复用、任务状态持久化、Human-in-the-loop、日志指标和产物导出。</blockquote>
+<h2 id="项目的真实定位"><a class="anchor" href="#项目的真实定位" aria-label="章节链接">#</a>项目的真实定位</h2>
+<p>这个项目可以坦诚定位为练手和展示项目。它比较粗糙，仍然有不少工程细节可以继续打磨，但它不是玩具式单文件 Demo。它已经把 Agent 系统常见的多个核心边界串了起来：</p>
+<ul>
+<li>有明确的 Agent 生命周期。</li>
+<li>有编排层和状态机。</li>
+<li>有工具抽象和工具调用记录。</li>
+<li>有证据结构和引用追踪。</li>
+<li>有 Critic 反馈循环。</li>
+<li>有持久化任务状态。</li>
+<li>有模型路由和 fallback。</li>
+<li>有 RAG 知识复用。</li>
+<li>有前端、API、测试和文档。</li>
+</ul>
+<h2 id="粗糙但有价值的地方"><a class="anchor" href="#粗糙但有价值的地方" aria-label="章节链接">#</a>粗糙但有价值的地方</h2>
+<p>这个项目的价值不在于每个模块都做到最好，而在于它把多个技术点放到了同一条任务链路中：</p>
+<ul>
+<li>Agent 不是孤立函数，而是被 Orchestrator 编排。</li>
+<li>工具调用不是临时脚本，而是有统一 <code>ToolResult</code> 和步骤记录。</li>
+<li>RAG 不是单独问答 Demo，而是接入到 Research 前置缓存和任务后置入库。</li>
+<li>记忆不是一个概念名词，而是拆成事件、长期 KV、滚动摘要、上下文压缩和证据窗口。</li>
+<li>证据不是普通文本片段，而是有 <code>card_id</code>、<code>topic_id</code>、URL、段落 ID 和 snippet。</li>
+<li>模型不是硬编码一个 Provider，而是通过 Router 记录选择、fallback、成本和延迟。</li>
+</ul>
+<p>后续如果继续加强，优先方向是：增加真实评测集、补更多端到端测试、完善权限隔离、给前端补一套更完整的演示截图和录屏。</p>
+</article>
+      </main>
+      <aside class="outline">
+        <div class="outline-title">章节目录</div>
+        <nav class="outline-nav" aria-label="当前页目录">
+<div class="outline-doc" data-outline-doc="技术导读">
+<a class="outline-doc-title" href="#技术导读">技术导读</a>
+<a class="outline-level-1" href="#技术导读-练手项目向">技术导读（练手项目向）</a>
+<a class="outline-level-2" href="#项目一句话">项目一句话</a>
+<a class="outline-level-2" href="#技术栈-务实版">技术栈（务实版）</a>
+<a class="outline-level-2" href="#请求生命周期-简化">请求生命周期（简化）</a>
+<a class="outline-level-2" href="#代码从哪里读起">代码从哪里读起</a>
+<a class="outline-level-2" href="#与-gitbook-手册的对应关系">与 GitBook 手册的对应关系</a>
+<a class="outline-level-2" href="#隐私与开源上传注意">隐私与开源上传注意</a>
+<a class="outline-level-2" href="#刻意不做-可后续加强-适合写在-readme-或面试里">刻意不做 / 可后续加强（适合写在 README 或面试里）</a>
+</div>
+<div class="outline-doc" data-outline-doc="工程设计手册">
+<a class="outline-doc-title" href="#工程设计手册">工程设计手册</a>
+<a class="outline-level-1" href="#迭代式深度研究智能体平台-工程设计手册">迭代式深度研究智能体平台：工程设计手册</a>
+<a class="outline-level-2" href="#项目定位">项目定位</a>
+<a class="outline-level-2" href="#适合展示的关键词">适合展示的关键词</a>
+<a class="outline-level-2" href="#快速阅读路径">快速阅读路径</a>
+</div>
+<div class="outline-doc" data-outline-doc="1-系统总览">
+<a class="outline-doc-title" href="#1-系统总览">1. 系统总览</a>
+<a class="outline-level-1" href="#1-系统总览-2">1. 系统总览</a>
+<a class="outline-level-2" href="#核心问题">核心问题</a>
+<a class="outline-level-2" href="#总体架构">总体架构</a>
+<a class="outline-level-2" href="#运行链路">运行链路</a>
+<a class="outline-level-2" href="#项目边界">项目边界</a>
+<a class="outline-level-2" href="#代码入口">代码入口</a>
+</div>
+<div class="outline-doc" data-outline-doc="2-agent-开发设计">
+<a class="outline-doc-title" href="#2-agent-开发设计">2. Agent 开发设计</a>
+<a class="outline-level-1" href="#2-agent-开发设计-2">2. Agent 开发设计</a>
+<a class="outline-level-2" href="#agent-生命周期">Agent 生命周期</a>
+<a class="outline-level-2" href="#baseagent-的职责">BaseAgent 的职责</a>
+<a class="outline-level-2" href="#agentoutput">AgentOutput</a>
+<a class="outline-level-2" href="#为什么不用完全自由-react">为什么不用完全自由 ReAct</a>
+<a class="outline-level-2" href="#四类-agent-的分工">四类 Agent 的分工</a>
+<a class="outline-level-2" href="#agent-扩展方式">Agent 扩展方式</a>
+</div>
+<div class="outline-doc" data-outline-doc="3-多-agent-编排">
+<a class="outline-doc-title" href="#3-多-agent-编排">3. 多 Agent 编排</a>
+<a class="outline-level-1" href="#3-多-agent-编排-2">3. 多 Agent 编排</a>
+<a class="outline-level-2" href="#编排入口">编排入口</a>
+<a class="outline-level-2" href="#langgraph-状态图">LangGraph 状态图</a>
+<a class="outline-level-2" href="#条件路由">条件路由</a>
+<a class="outline-level-2" href="#并行-researcher">并行 Researcher</a>
+<a class="outline-level-2" href="#human-in-the-loop">Human-in-the-loop</a>
+<a class="outline-level-2" href="#agent-之间如何传递信息">Agent 之间如何传递信息</a>
+</div>
+<div class="outline-doc" data-outline-doc="4-状态管理">
+<a class="outline-doc-title" href="#4-状态管理">4. 状态管理</a>
+<a class="outline-level-1" href="#4-状态管理-2">4. 状态管理</a>
+<a class="outline-level-2" href="#状态层次">状态层次</a>
+<a class="outline-level-2" href="#taskstate">TaskState</a>
+<a class="outline-level-2" href="#stepstate">StepState</a>
+<a class="outline-level-2" href="#researchgraphstate">ResearchGraphState</a>
+<a class="outline-level-2" href="#checkpoint">Checkpoint</a>
+<a class="outline-level-2" href="#状态更新原则">状态更新原则</a>
+</div>
+<div class="outline-doc" data-outline-doc="5-工具调用">
+<a class="outline-doc-title" href="#5-工具调用">5. 工具调用</a>
+<a class="outline-level-1" href="#5-工具调用-2">5. 工具调用</a>
+<a class="outline-level-2" href="#工具抽象">工具抽象</a>
+<a class="outline-level-2" href="#当前工具">当前工具</a>
+<a class="outline-level-2" href="#researcher-的工具链">Researcher 的工具链</a>
+<a class="outline-level-2" href="#web-search">Web Search</a>
+<a class="outline-level-2" href="#web-fetch">Web Fetch</a>
+<a class="outline-level-2" href="#工具失败处理">工具失败处理</a>
+<a class="outline-level-2" href="#与-mcp-的关系">与 MCP 的关系</a>
+</div>
+<div class="outline-doc" data-outline-doc="6-rag-知识系统">
+<a class="outline-doc-title" href="#6-rag-知识系统">6. RAG 知识系统</a>
+<a class="outline-level-1" href="#6-rag-知识系统-2">6. RAG 知识系统</a>
+<a class="outline-level-2" href="#系统定位">系统定位</a>
+<a class="outline-level-2" href="#外部知识入库">外部知识入库</a>
+<a class="outline-level-2" href="#知识检索">知识检索</a>
+<a class="outline-level-2" href="#知识删除">知识删除</a>
+<a class="outline-level-2" href="#研究证据沉淀">研究证据沉淀</a>
+<a class="outline-level-2" href="#research-前如何使用-rag">Research 前如何使用 RAG</a>
+<a class="outline-level-2" href="#元数据设计">元数据设计</a>
+<a class="outline-level-2" href="#展示口径">展示口径</a>
+</div>
+<div class="outline-doc" data-outline-doc="7-记忆系统与上下文血统">
+<a class="outline-doc-title" href="#7-记忆系统与上下文血统">7. 记忆系统与上下文血统</a>
+<a class="outline-level-1" href="#7-记忆系统与上下文血统-2">7. 记忆系统与上下文血统</a>
+<a class="outline-level-2" href="#为什么要分层记忆">为什么要分层记忆</a>
+<a class="outline-level-2" href="#memorystore">MemoryStore</a>
+<a class="outline-level-2" href="#滚动摘要">滚动摘要</a>
+<a class="outline-level-2" href="#上下文压缩">上下文压缩</a>
+<a class="outline-level-2" href="#证据窗口">证据窗口</a>
+<a class="outline-level-2" href="#记忆血统">记忆血统</a>
+<a class="outline-level-2" href="#记忆与-rag-的区别">记忆与 RAG 的区别</a>
+</div>
+<div class="outline-doc" data-outline-doc="8-模型路由">
+<a class="outline-doc-title" href="#8-模型路由">8. 模型路由</a>
+<a class="outline-level-1" href="#8-模型路由-2">8. 模型路由</a>
+<a class="outline-level-2" href="#路由目标">路由目标</a>
+<a class="outline-level-2" href="#provider-列表">Provider 列表</a>
+<a class="outline-level-2" href="#llmcontext">LLMContext</a>
+<a class="outline-level-2" href="#选择规则">选择规则</a>
+<a class="outline-level-2" href="#routingdecision">RoutingDecision</a>
+<a class="outline-level-2" href="#失败与降级">失败与降级</a>
+<a class="outline-level-2" href="#适合展示的说法">适合展示的说法</a>
+</div>
+<div class="outline-doc" data-outline-doc="9-证据追踪">
+<a class="outline-doc-title" href="#9-证据追踪">9. 证据追踪</a>
+<a class="outline-level-1" href="#9-证据追踪-2">9. 证据追踪</a>
+<a class="outline-level-2" href="#evidencecard">EvidenceCard</a>
+<a class="outline-level-2" href="#证据生成流程">证据生成流程</a>
+<a class="outline-level-2" href="#card_id">card_id</a>
+<a class="outline-level-2" href="#critic-如何评估证据">Critic 如何评估证据</a>
+<a class="outline-level-2" href="#writer-如何使用证据">Writer 如何使用证据</a>
+<a class="outline-level-2" href="#证据血统链">证据血统链</a>
+<a class="outline-level-2" href="#导出产物">导出产物</a>
+</div>
+<div class="outline-doc" data-outline-doc="10-可观测性与产物">
+<a class="outline-doc-title" href="#10-可观测性与产物">10. 可观测性与产物</a>
+<a class="outline-level-1" href="#10-可观测性与产物-2">10. 可观测性与产物</a>
+<a class="outline-level-2" href="#日志">日志</a>
+<a class="outline-level-2" href="#metrics">Metrics</a>
+<a class="outline-level-2" href="#工具调用记录">工具调用记录</a>
+<a class="outline-level-2" href="#模型路由日志">模型路由日志</a>
+<a class="outline-level-2" href="#上下文统计">上下文统计</a>
+<a class="outline-level-2" href="#产物导出">产物导出</a>
+</div>
+<div class="outline-doc" data-outline-doc="11-api-前端与演示">
+<a class="outline-doc-title" href="#11-api-前端与演示">11. API、前端与演示</a>
+<a class="outline-level-1" href="#11-api-前端与演示-2">11. API、前端与演示</a>
+<a class="outline-level-2" href="#api-入口">API 入口</a>
+<a class="outline-level-2" href="#前端工作台">前端工作台</a>
+<a class="outline-level-2" href="#本地运行">本地运行</a>
+<a class="outline-level-2" href="#演示任务建议">演示任务建议</a>
+<a class="outline-level-2" href="#演示顺序">演示顺序</a>
+<a class="outline-level-2" href="#注意事项">注意事项</a>
+</div>
+<div class="outline-doc" data-outline-doc="12-github-展示与提交建议">
+<a class="outline-doc-title" href="#12-github-展示与提交建议">12. GitHub 展示与提交建议</a>
+<a class="outline-level-1" href="#12-github-展示与提交建议-2">12. GitHub 展示与提交建议</a>
+<a class="outline-level-2" href="#上传前应保留的内容">上传前应保留的内容</a>
+<a class="outline-level-2" href="#上传前应排除的内容">上传前应排除的内容</a>
+<a class="outline-level-2" href="#推荐仓库展示结构">推荐仓库展示结构</a>
+<a class="outline-level-2" href="#初始化-git-仓库">初始化 Git 仓库</a>
+<a class="outline-level-2" href="#提交前检查">提交前检查</a>
+<a class="outline-level-2" href="#展示时怎么讲">展示时怎么讲</a>
+<a class="outline-level-2" href="#项目的真实定位">项目的真实定位</a>
+<a class="outline-level-2" href="#粗糙但有价值的地方">粗糙但有价值的地方</a>
+</div>
+</nav>
+      </aside>
+    </div>
+    <button class="mobile-toc" type="button" aria-label="打开目录">目录</button>
+    <script src="./app.js"></script>
+  </body>
+</html>
